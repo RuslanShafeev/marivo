@@ -1,22 +1,23 @@
 import pygame
 from Utilities import *
 from Map import *
+from Goomba import Goomba
 
 
 class Player(pygame.sprite.Sprite):
+    states = {
+        0: 'small',
+        1: 'big'
+    }
+
     def __init__(self, x, y):
         super().__init__(all_sprites, players_group)
-
-        self.MARIO_IMAGES = self.load_images()
-        self.frames = self.MARIO_IMAGES['normal']['small']
-        self.l_frames = [pygame.transform.flip(frame, True, False) for frame in self.frames]
-        self.r_frames = self.frames
+        self.mario_state = 1
+        self.wound = 0
 
         self.cur_frame = 0
-
-        self.image = self.frames[self.cur_frame]
-        self.rect = self.image.get_rect()
-        self.rect = self.rect.move(x, y)
+        self.MARIO_IMAGES = self.load_images()
+        self.load_frames(x, y)
 
         self.max_jumps = 15
         self.cur_jump = 0
@@ -38,8 +39,19 @@ class Player(pygame.sprite.Sprite):
             images[name] = {'small': s_surf, 'big': b_surf}
         return images
 
+    def load_frames(self, x, y):
+        self.frames = self.MARIO_IMAGES['normal'][Player.states[self.mario_state]]
+        self.l_frames = [pygame.transform.flip(frame, True, False) for frame in self.frames]
+        self.r_frames = self.frames
+
+        self.image = self.frames[self.cur_frame]
+        self.rect = self.image.get_rect()
+        self.rect = self.rect.move(x, y)
 
     def update(self):
+        if self.wound != 0:
+            self.wound = (self.wound + 1) % 60
+
         self.cur_frame = (self.cur_frame + 1) % 60
         self.vy += self.a * 2
 
@@ -52,7 +64,11 @@ class Player(pygame.sprite.Sprite):
 
     def check_collisions(self):
         self.update_sides()
+        self.check_tile_collisions()
+        self.check_enemies_collisions()
+        self.check_enemies_collisions()
 
+    def check_tile_collisions(self):
         colided_tile = pygame.sprite.spritecollideany(self.left_side, tiles_group)
         if colided_tile:
             self.rect.x = colided_tile.rect.right
@@ -82,6 +98,38 @@ class Player(pygame.sprite.Sprite):
             self.rect.y = colided_tile.rect.bottom
             self.vy = max(0, self.vy)
             self.update_sides()
+
+    def check_enemies_collisions(self):
+        colided_enemy = pygame.sprite.spritecollideany(self.left_side, enemies_group)
+        if colided_enemy:
+            if self.mario_state == 1:
+                self.mario_state = 0
+                self.cur_frame = 0
+                self.load_frames(self.rect.x, self.rect.bottom - self.rect.h // 2)
+                self.wound = 1
+            elif self.mario_state == 0 and self.wound == 0:
+                self.mario_state = -1
+                print("mario, vi sdohli")
+
+        colided_tile = pygame.sprite.spritecollideany(self.right_side, enemies_group)
+        if colided_tile:
+            if self.mario_state == 1:
+                self.mario_state = 0
+                self.cur_frame = 0
+                self.load_frames(self.rect.x, self.rect.bottom - self.rect.h // 2)
+                self.wound = 1
+            elif self.mario_state == 0 and self.wound == 0:
+                self.mario_state = -1
+                print("mario, vi sdohli")
+
+        colided_enemy = pygame.sprite.spritecollideany(self.down_side, enemies_group)
+        if colided_enemy:
+            self.rect.bottom = colided_enemy.rect.y
+            self.vy = min(0, self.vy)
+            self.update_sides()
+            self.cur_jump = 0
+            if isinstance(colided_enemy, Goomba):
+                colided_enemy.die()
 
     def jump(self):
         if self.cur_jump < self.max_jumps:

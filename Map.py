@@ -1,16 +1,19 @@
 from Tile import Tile
 from Player import Player
+from Goomba import Goomba
 
 player = Player(150, 100)
 
-for i in range(50, 900, 48):
+for i in range(50, 1188, 48):
     Tile(i, 600, 'Floor')
 
-
 for i in range(300, 450, 48):
-    Tile(i, 350, 'BrickPlain')
+    Tile(i, 400, 'BrickPlain')
 
 for i in range(360, 602, 48):
     Tile(2, i, 'BrickPlain')
 
 Tile(550, 552, 'Floor')
+Tile(900, 552, 'Floor')
+
+Goomba(750, 552, False)

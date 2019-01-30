@@ -42,4 +42,5 @@ screen = pygame.display.set_mode(SIZE)
 
 all_sprites = pygame.sprite.Group()
 players_group = pygame.sprite.Group()
+enemies_group = pygame.sprite.Group()
 tiles_group = pygame.sprite.Group()
