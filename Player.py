@@ -5,15 +5,17 @@ from Goomba import Goomba
 
 
 class Player(pygame.sprite.Sprite):
-    states = {
-        0: 'small',
-        1: 'big'
-    }
+    def __init__(self, x, y, world):
+        super().__init__(players_group)
 
-    def __init__(self, x, y):
-        super().__init__(all_sprites, players_group)
-        self.mario_state = 1
-        self.wound = 0
+        self.vx = 0
+        self.vy = 0
+        self.a = 0.5
+        self.max_v = 10
+
+        self.world = world
+        self.mario_state = 'big'
+        self.invincibility = 0   # Время неуязвимости в кадрах
 
         self.cur_frame = 0
         self.MARIO_IMAGES = self.load_images()
@@ -22,17 +24,10 @@ class Player(pygame.sprite.Sprite):
         self.max_jumps = 15
         self.cur_jump = 0
 
-        self.vx = 0
-        self.vy = 0
-        self.a = 0.5
-        self.max_v = 10
-
-        self.create_sides()
-
     def load_images(self):
         images = {}
         for name, s_surf, b_surf in zip(['normal', 'fire', 'luigi', 'star_1', 'star_2', 'star_3',
-                                         'underground_1', 'underground_2', 'sastle',
+                                         'underground_1', 'underground_2', 'castle',
                                          'underwater_1', 'underwater_2'],
                                         cut_sheet(load_image('Mario.png'), 14, 11),
                                         cut_sheet(load_image('Big_Mario.png'), 19, 11)):
@@ -40,24 +35,28 @@ class Player(pygame.sprite.Sprite):
         return images
 
     def load_frames(self, x, y):
-        self.frames = self.MARIO_IMAGES['normal'][Player.states[self.mario_state]]
+        self.frames = self.MARIO_IMAGES[self.world][self.mario_state]
         self.l_frames = [pygame.transform.flip(frame, True, False) for frame in self.frames]
         self.r_frames = self.frames
 
         self.image = self.frames[self.cur_frame]
         self.rect = self.image.get_rect()
         self.rect = self.rect.move(x, y)
+        self.create_sides()
 
     def update(self):
-        if self.wound != 0:
-            self.wound = (self.wound + 1) % 60
-
         self.cur_frame = (self.cur_frame + 1) % 60
         self.vy += self.a * 2
 
+        self.invincibility = max(0, self.invincibility - 1)
         self.vx = max(min(self.vx, self.max_v), -self.max_v)
         self.vy = max(min(self.vy, self.max_v), -self.max_v)
         self.rect = self.rect.move(self.vx, self.vy)
+
+        if self.mario_state == 'died':
+            self.image = self.frames[5]
+            self.jump()
+            return
 
         self.check_collisions()
         self.sides_group.draw(screen)
@@ -65,7 +64,6 @@ class Player(pygame.sprite.Sprite):
     def check_collisions(self):
         self.update_sides()
         self.check_tile_collisions()
-        self.check_enemies_collisions()
         self.check_enemies_collisions()
 
     def check_tile_collisions(self):
@@ -100,30 +98,22 @@ class Player(pygame.sprite.Sprite):
             self.update_sides()
 
     def check_enemies_collisions(self):
-        colided_enemy = pygame.sprite.spritecollideany(self.left_side, enemies_group)
-        if colided_enemy:
-            if self.mario_state == 1:
-                self.mario_state = 0
-                self.cur_frame = 0
-                self.load_frames(self.rect.x, self.rect.bottom - self.rect.h // 2)
-                self.wound = 1
-            elif self.mario_state == 0 and self.wound == 0:
-                self.mario_state = -1
-                print("mario, vi sdohli")
-
-        colided_tile = pygame.sprite.spritecollideany(self.right_side, enemies_group)
-        if colided_tile:
-            if self.mario_state == 1:
-                self.mario_state = 0
-                self.cur_frame = 0
-                self.load_frames(self.rect.x, self.rect.bottom - self.rect.h // 2)
-                self.wound = 1
-            elif self.mario_state == 0 and self.wound == 0:
-                self.mario_state = -1
-                print("mario, vi sdohli")
+        for side in [self.left_side, self.right_side]:
+            colided_enemy = pygame.sprite.spritecollideany(side, enemies_group)
+            if colided_enemy:
+                if self.mario_state == 'big':
+                    self.mario_state = 'small'
+                    self.cur_frame = 0
+                    self.load_frames(self.rect.x, self.rect.bottom - self.rect.h // 2)
+                    self.invincibility = 180
+                elif self.mario_state == 'small' and not self.invincibility:
+                    self.mario_state = 'died'
+                    self.jump()
+                    print("mario, vi sdohli")
+                return
 
         colided_enemy = pygame.sprite.spritecollideany(self.down_side, enemies_group)
-        if colided_enemy:
+        if colided_enemy and self.vy > 0:
             self.rect.bottom = colided_enemy.rect.y
             self.vy = min(0, self.vy)
             self.update_sides()
@@ -171,13 +161,15 @@ class Player(pygame.sprite.Sprite):
                     self.jump()
                     any_key_pressed = True
 
+        if self.mario_state == 'died':
+            return
+
         if self.cur_jump and not any_key_pressed:
             if pygame.key.get_pressed()[pygame.K_UP]:
                 self.jump()
                 any_key_pressed = True
             else:
                 self.cur_jump = self.max_jumps
-
 
         for key, func in [(pygame.K_RIGHT, self.right), (pygame.K_LEFT, self.left)]:
             if pygame.key.get_pressed()[key]:
@@ -187,7 +179,6 @@ class Player(pygame.sprite.Sprite):
         if not any_key_pressed:
             self.vx -= self.vx // max(abs(self.vx), 1) * self.a
             self.image = self.frames[6]
-
 
     def create_sides(self):
         self.sides_group = pygame.sprite.Group()

@@ -2,7 +2,10 @@ from Tile import Tile
 from Player import Player
 from Goomba import Goomba
 
-player = Player(150, 100)
+
+world = 'normal'
+
+player = Player(150, 100, world)
 
 for i in range(50, 1188, 48):
     Tile(i, 600, 'Floor')
@@ -16,4 +19,5 @@ for i in range(360, 602, 48):
 Tile(550, 552, 'Floor')
 Tile(900, 552, 'Floor')
 
-Goomba(750, 552, False)
+Goomba(750, 300, world)
+Goomba(690, 300, world)

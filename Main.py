@@ -9,5 +9,7 @@ while True:
     screen.fill((92, 148, 252))
     all_sprites.update()
     all_sprites.draw(screen)
+    players_group.update()
+    players_group.draw(screen)
     pygame.display.flip()
     time.tick(60)

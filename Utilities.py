@@ -39,6 +39,7 @@ def cut_sheet(sheet, columns, rows):
 pygame.init()
 SIZE = WIDTH, HEIGHT = 1280, 720
 screen = pygame.display.set_mode(SIZE)
+world = 'normal'
 
 all_sprites = pygame.sprite.Group()
 players_group = pygame.sprite.Group()
