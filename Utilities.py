@@ -37,7 +37,8 @@ def cut_sheet(sheet, columns, rows):
 
 
 pygame.init()
-SIZE = WIDTH, HEIGHT = 1280, 720
+PPM = 48
+SIZE = WIDTH, HEIGHT = 32 * PPM , 15 * PPM
 screen = pygame.display.set_mode(SIZE)
 world = 'normal'
 

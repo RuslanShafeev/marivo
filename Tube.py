@@ -13,13 +13,13 @@ class TubePart(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
     def move(self, x, y):
-        self.rect = self.rect.move(x, y)
+        self.rect = self.rect.move((x - 1) * PPM, y * PPM)
 
 
 class Tube:
     def __init__(self, x, y, pow):
-        for i in range(pow):
+        for i in range(pow - 1):
             tube_part = TubePart("Base")
-            tube_part.move(x, y - tube_part.rect.h * (i + 1))
+            tube_part.move(x, y - i)
         tube_part = TubePart("Head")
-        tube_part.move(x, y - tube_part.rect.h * pow)
+        tube_part.move(x, y - pow + 1)
