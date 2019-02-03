@@ -1,6 +1,7 @@
 from Tile import Tile
 from Player import Player
 from Goomba import Goomba
+from Tube import Tube
 
 
 world = 'normal'
@@ -18,6 +19,8 @@ for i in range(360, 602, 48):
 
 Tile(550, 552, 'Floor')
 Tile(900, 552, 'Floor')
+
+Tube(1000, 600, 3)
 
 Goomba(750, 300, world)
 Goomba(690, 300, world)
