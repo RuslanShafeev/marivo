@@ -7,9 +7,16 @@ time = pygame.time.Clock()
 while True:
     player.process_events(pygame.event.get())
     screen.fill((92, 148, 252))
-    all_sprites.update()
-    all_sprites.draw(screen)
+
+
+    camera.update(player)
+    for sprite in all_sprites:
+        camera.apply(sprite)
+
     players_group.update()
+    all_sprites.update()
+
+    all_sprites.draw(screen)
     players_group.draw(screen)
     pygame.display.flip()
     time.tick(60)

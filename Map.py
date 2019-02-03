@@ -1,7 +1,8 @@
-from Tile import Tile
+from Tile import *
 from Player import Player
 from Goomba import Goomba
 from Tube import Tube
+from Camera import Camera
 
 
 world = 'normal'
@@ -42,25 +43,27 @@ empty = [69, 70, 86, 88, 153, 154]
 
 player = Player(150, 100, world)
 
+camera = Camera()
+
 Goomba(750, 300, world)
 
 for i in range(1, WIDTH + 1):
     if i in empty:
         continue
-    Tile(i, 13, 'Floor')
-    Tile(i, 14, 'Floor')
+    Floor(i, 13, world)
+    Floor(i, 14, world)
 
 for y in bricks:
     for x in bricks[y]:
-        Tile(x, y, 'BrickPlain')
+        BrickPlain(x, y, world)
 
 for y in quests:
     for x in quests[y]:
-        Tile(x, y, 'Quest')
+        Quest(x, y, world, 'Coin')
 
 for y in stones:
     for x in stones[y]:
-        Tile(x, y, 'CastleBlock')
+        CastleBlock(x, y, world)
 
 for y in tubes:
     for x, pow in tubes[y]:

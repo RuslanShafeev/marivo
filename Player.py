@@ -21,7 +21,7 @@ class Player(pygame.sprite.Sprite):
         self.MARIO_IMAGES = self.load_images()
         self.load_frames(x, y)
 
-        self.max_jumps = 15
+        self.max_jumps = 17
         self.cur_jump = 0
 
     def load_images(self):
@@ -91,7 +91,7 @@ class Player(pygame.sprite.Sprite):
         colided_tile = pygame.sprite.spritecollideany(self.top_side, tiles_group)
         if colided_tile:
             self.cur_jump = self.max_jumps
-            colided_tile.kill()
+            colided_tile.interact(self.mario_state)
 
             self.rect.y = colided_tile.rect.bottom
             self.vy = max(0, self.vy)
