@@ -1,5 +1,26 @@
 import pygame
 from Utilities import *
+import random
+
+
+class Particle(pygame.sprite.Sprite):
+    def __init__(self, pos, dx, dy, image):
+        super().__init__(all_sprites)
+        self.image = pygame.transform.rotate(
+            pygame.transform.scale(image, (image.get_width() // 2, image.get_height() // 2)), random.randint(30, 60))
+
+        self.rect = self.image.get_rect()
+
+        self.velocity = [dx, dy]
+        self.rect.x, self.rect.y = pos
+        self.gravity = GRAVITY
+
+    def update(self):
+        self.velocity[1] += self.gravity
+        self.rect.x += self.velocity[0]
+        self.rect.y += self.velocity[1]
+        if self.rect.y > HEIGHT:
+            self.kill()
 
 
 class TilesBase(pygame.sprite.Sprite):
@@ -13,10 +34,13 @@ class TilesBase(pygame.sprite.Sprite):
         self.rect = self.rect.move((x - 1) * PPM, y * PPM)
 
     def interact(self, mario_state):
-        self.kill()
-
-    def update(self):
         pass
+
+    def create_particles(self):
+        Particle(self.rect.topleft, -5, 0, self.image)
+        Particle(self.rect.midtop, 5, 0, self.image)
+        Particle(self.rect.midleft, -5, 5, self.image)
+        Particle(self.rect.center, 5, 5, self.image)
 
 
 class Floor(TilesBase):
@@ -25,16 +49,14 @@ class Floor(TilesBase):
         super().__init__(x, y)
 
 
-class Brick(TilesBase):
-    def __init__(self, x, y, world):
-        self.image = TilesBase.IMAGES[world][1]
-        super().__init__(x, y)
-
-
 class BrickPlain(TilesBase):
     def __init__(self, x, y, world):
         self.image = TilesBase.IMAGES[world][2]
         super().__init__(x, y)
+
+    def interact(self, mario_state):
+        self.create_particles()
+        self.kill()
 
 
 class CastleBlock(TilesBase):
@@ -49,10 +71,47 @@ class CubbleStone(TilesBase):
         super().__init__(x, y)
 
 
-class CubbleStone(TilesBase):
+class PavingStone(TilesBase):
     def __init__(self, x, y, world):
         self.image = TilesBase.IMAGES[world][5]
         super().__init__(x, y)
+
+
+class Brick(TilesBase):
+    def __init__(self, x, y, world, item=None):
+        self.image = TilesBase.IMAGES[world][1]
+        self.stone_image = TilesBase.IMAGES[world][9]
+        super().__init__(x, y)
+
+        self.items = ([item] if item else []) * (random.randint(5, 10) if item == 'Coin' else 1)
+        self.moving = False
+        self.start_y = self.rect.y
+        self.end_y = self.start_y - 14
+
+    def interact(self, mario_state):
+        if self.rect.y == self.start_y and self.image is not self.stone_image:
+            if self.items:
+                print(self.items.pop())
+                if not self.items:
+                    self.image = self.stone_image
+                self.moving = True
+            elif mario_state == 'small':
+                self.moving = True
+            else:
+                self.create_particles()
+                self.kill()
+
+    def update(self):
+        self.move()
+
+    def move(self):
+        if self.moving:
+            if self.rect.y > self.end_y:
+                self.rect.y -= 3
+            else:
+                self.moving = False
+        elif self.rect.y < self.start_y:
+            self.rect.y += 3
 
 
 class Quest(TilesBase):
@@ -62,34 +121,36 @@ class Quest(TilesBase):
         self.image = self.frames[self.cur_frame]
         super().__init__(x, y)
 
-        self.moving = False
-        self.max_delta = 5
-        self.cur_delta = 0
         self.item = item
+        self.moving = False
+        self.start_y = self.rect.y
+        self.end_y = self.start_y - 14
 
     def update(self):
-        if self.image is self.frames[3]:
-            return
-        self.cur_frame = (self.cur_frame + 1) % 60
-        self.image = self.frames[self.cur_frame // 10 % 3]
-        if self.moving:
-            if self.cur_delta < self.max_delta:
-                self.rect.y -= 3
-                self.cur_delta += 1
-            else:
-                self.moving = False
-                print(self.item)
-        elif self.cur_delta > 0:
-            self.rect.y += 3
-            self.cur_delta -= 1
-            if not self.cur_delta:
-                self.image = self.frames[3]
+        if self.image is not self.frames[3]:
+            self.cur_frame = (self.cur_frame + 1) % 60
+            self.image = self.frames[self.cur_frame // 10 % 3]
+            self.move()
 
     def interact(self, mario_state):
-        self.moving = True
+        if self.item:
+            print(self.item)
+            self.item = None
+            self.moving = True
+
+    def move(self):
+        if self.moving:
+            if self.rect.y > self.end_y:
+                self.rect.y -= 3
+            else:
+                self.moving = False
+        elif self.rect.y < self.start_y:
+            self.rect.y += 3
+            if self.rect.y == self.start_y:
+                self.image = self.frames[3]
 
 
 class Stone(TilesBase):
     def __init__(self, x, y, world):
-        self.image = TilesBase.IMAGES[world][10]
+        self.image = TilesBase.IMAGES[world][9]
         super().__init__(x, y)

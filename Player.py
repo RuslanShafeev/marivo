@@ -46,7 +46,7 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         self.cur_frame = (self.cur_frame + 1) % 60
-        self.vy += self.a * 2
+        self.vy += GRAVITY
 
         self.invincibility = max(0, self.invincibility - 1)
         self.vx = max(min(self.vx, self.max_v), -self.max_v)

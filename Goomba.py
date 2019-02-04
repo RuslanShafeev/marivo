@@ -22,7 +22,6 @@ class Goomba(pygame.sprite.Sprite):
 
         self.max_v = 10
         self.vy = 0
-        self.gravity = 1
         self.step_x = -1
 
         self.create_sides()
@@ -38,7 +37,7 @@ class Goomba(pygame.sprite.Sprite):
         self.cur_frame = (self.cur_frame + 1) % 60
         self.image = self.frames[self.cur_frame // 15 % 2]
 
-        self.vy += self.gravity
+        self.vy += GRAVITY
         self.vy = max(min(self.vy, self.max_v), -self.max_v)
         self.rect = self.rect.move(self.step_x, self.vy)
 
@@ -48,19 +47,22 @@ class Goomba(pygame.sprite.Sprite):
     def check_collisions(self):
         self.update_sides()
 
-        colided_tile = pygame.sprite.spritecollideany(self.left_side, all_sprites)
+        colided_tile = pygame.sprite.spritecollideany(self.left_side, tiles_group.sprites() +
+                                                      enemies_group.sprites())
         if colided_tile:
             self.rect.x = colided_tile.rect.right
             self.step_x = -self.step_x
             self.update_sides()
 
-        colided_tile = pygame.sprite.spritecollideany(self.right_side, all_sprites)
+        colided_tile = pygame.sprite.spritecollideany(self.right_side, tiles_group.sprites() +
+                                                      enemies_group.sprites())
         if colided_tile:
             self.rect.right = colided_tile.rect.x
             self.step_x = -self.step_x
             self.update_sides()
 
-        colided_tile = pygame.sprite.spritecollideany(self.down_side, all_sprites)
+        colided_tile = pygame.sprite.spritecollideany(self.down_side, tiles_group.sprites() +
+                                                      enemies_group.sprites())
         if colided_tile:
             self.rect.bottom = colided_tile.rect.y
             self.vy = min(0, self.vy)

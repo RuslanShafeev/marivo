@@ -55,7 +55,7 @@ for i in range(1, WIDTH + 1):
 
 for y in bricks:
     for x in bricks[y]:
-        BrickPlain(x, y, world)
+        Brick(x, y, world)
 
 for y in quests:
     for x in quests[y]:
