@@ -1,7 +1,15 @@
 import pygame
 from Utilities import *
 from Map import *
+from Hud import Hud
 
+
+TEXT_SIZE = 40
+hud_texts = ["SCORE", 0, "TIME", 400, "WORLD", "1-1", "COINS", 0, "LIVES", 3]
+huds = [None] * 5
+dx = SIZE[0] // 6
+for i in range(5):
+    huds[i] = Hud(dx * (i + 1), 20, hud_texts[2 * i], hud_texts[2 * i + 1], TEXT_SIZE)
 time = pygame.time.Clock()
 
 while True:
@@ -15,11 +23,9 @@ while True:
     players_group.update()
     all_sprites.update()
 
-    items_group.draw(screen)
-    enemies_group.draw(screen)
-    tiles_group.draw(screen)
+    all_sprites.draw(screen)
+    for hud in huds:
+        hud.draw(screen)
     players_group.draw(screen)
-    particles_group.draw(screen)
-
     pygame.display.flip()
     time.tick(60)
