@@ -8,7 +8,6 @@ while True:
     player.process_events(pygame.event.get())
     screen.fill((92, 148, 252))
 
-
     camera.update(player)
     for sprite in all_sprites:
         camera.apply(sprite)

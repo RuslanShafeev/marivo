@@ -2,24 +2,20 @@ import pygame
 from Utilities import *
 from Map import *
 from Goomba import Goomba
+from BaseCharacter import BaseCharacter
 
 
-class Player(pygame.sprite.Sprite):
+class Player(BaseCharacter):
     def __init__(self, x, y, world):
-        super().__init__(players_group)
-
-        self.vx = 0
-        self.vy = 0
-        self.a = 0.5
-        self.max_v = 10
-
         self.world = world
         self.mario_state = 'big'
-        self.invincibility = 0   # Время неуязвимости в кадрах
-
-        self.cur_frame = 0
         self.MARIO_IMAGES = self.load_images()
-        self.load_frames(x, y)
+        self.load_frames()
+        super().__init__(x, y, players_group)
+
+        self.vx = 0
+        self.a = 0.5
+        self.invincibility = 0  # Время неуязвимости в кадрах
 
         self.max_jumps = 17
         self.cur_jump = 0
@@ -34,39 +30,37 @@ class Player(pygame.sprite.Sprite):
             images[name] = {'small': s_surf, 'big': b_surf}
         return images
 
-    def load_frames(self, x, y):
+    def load_frames(self):
+        self.cur_frame = 0
         self.frames = self.MARIO_IMAGES[self.world][self.mario_state]
         self.l_frames = [pygame.transform.flip(frame, True, False) for frame in self.frames]
         self.r_frames = self.frames
-
         self.image = self.frames[self.cur_frame]
+
+    def update_frames(self, x, y):
+        self.load_frames()
         self.rect = self.image.get_rect()
         self.rect = self.rect.move(x, y)
         self.create_sides()
 
     def update(self):
         self.cur_frame = (self.cur_frame + 1) % 60
-        self.vy += GRAVITY
-
         self.invincibility = max(0, self.invincibility - 1)
         self.vx = max(min(self.vx, self.max_v), -self.max_v)
-        self.vy = max(min(self.vy, self.max_v), -self.max_v)
-        self.rect = self.rect.move(self.vx, self.vy)
+        self.update_coords()
 
         if self.mario_state == 'died':
             self.image = self.frames[5]
             self.jump()
             return
 
-        self.check_collisions()
-        self.sides_group.draw(screen)
-
-    def check_collisions(self):
-        self.update_sides()
         self.check_tile_collisions()
         self.check_enemies_collisions()
 
+        self.sides_group.draw(screen)
+
     def check_tile_collisions(self):
+        self.update_sides()
         colided_tile = pygame.sprite.spritecollideany(self.left_side, tiles_group)
         if colided_tile:
             self.rect.x = colided_tile.rect.right
@@ -98,13 +92,13 @@ class Player(pygame.sprite.Sprite):
             self.update_sides()
 
     def check_enemies_collisions(self):
+        self.update_sides()
         for side in [self.left_side, self.right_side]:
             colided_enemy = pygame.sprite.spritecollideany(side, enemies_group)
             if colided_enemy:
                 if self.mario_state == 'big':
                     self.mario_state = 'small'
-                    self.cur_frame = 0
-                    self.load_frames(self.rect.x, self.rect.bottom - self.rect.h // 2)
+                    self.update_frames(self.rect.x, self.rect.bottom - self.rect.h // 2)
                     self.invincibility = 180
                 elif self.mario_state == 'small' and not self.invincibility:
                     self.mario_state = 'died'
@@ -180,30 +174,11 @@ class Player(pygame.sprite.Sprite):
             self.vx -= self.vx // max(abs(self.vx), 1) * self.a
             self.image = self.frames[6]
 
-    def create_sides(self):
-        self.sides_group = pygame.sprite.Group()
+    def create_top_side(self):
         self.top_side = pygame.sprite.Sprite(self.sides_group)
-        self.down_side = pygame.sprite.Sprite(self.sides_group)
-        self.left_side = pygame.sprite.Sprite(self.sides_group)
-        self.right_side = pygame.sprite.Sprite(self.sides_group)
-        self.update_sides()
-
-        # Код ниже рисует зеленые линии вокруг Марио для дебага. Удалю, когда пойму, что коллизии работают корректно
         self.top_side.image = pygame.Surface((self.rect.w - self.max_v * 2, 1))
         self.top_side.image.fill((0, 255, 0))
-        self.down_side.image = pygame.Surface((self.rect.w, 1))
-        self.down_side.image.fill((0, 255, 0))
-        self.left_side.image = pygame.Surface((1, self.rect.h - self.max_v * 2))
-        self.left_side.image.fill((0, 255, 0))
-        self.right_side.image = pygame.Surface((1, self.rect.h - self.max_v * 2))
-        self.right_side.image.fill((0, 255, 0))
 
-    def update_sides(self):
+    def update_top_side(self):
         self.top_side.rect = pygame.Rect(self.rect.x + self.max_v, self.rect.y - 1,
                                          self.rect.w - self.max_v * 2, 1)
-        self.down_side.rect = pygame.Rect(self.rect.x, self.rect.bottom, self.rect.w, 1)
-
-        self.left_side.rect = pygame.Rect(self.rect.x - 1, self.rect.y + self.max_v, 1,
-                                          self.rect.h - self.max_v * 2)
-        self.right_side.rect = pygame.Rect(self.rect.right, self.rect.y + self.max_v, 1,
-                                           self.rect.h - self.max_v * 2)
