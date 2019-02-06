@@ -23,9 +23,14 @@ while True:
     players_group.update()
     all_sprites.update()
 
-    all_sprites.draw(screen)
     for hud in huds:
         hud.draw(screen)
+
+    items_group.draw(screen)
+    enemies_group.draw(screen)
+    tiles_group.draw(screen)
     players_group.draw(screen)
+    particles_group.draw(screen)
+
     pygame.display.flip()
     time.tick(60)
