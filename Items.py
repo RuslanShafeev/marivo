@@ -108,6 +108,7 @@ class FireFlower(pygame.sprite.Sprite):
     def check_player_collisions(self):
         collided = pygame.sprite.spritecollideany(self, players_group)
         if collided:
+            collided.set_state('fire', 'big')
             print('firemario')
             self.kill()
 

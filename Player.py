@@ -97,10 +97,10 @@ class Player(BaseCharacter):
         for side in [self.left_side, self.right_side]:
             colided_enemy = pygame.sprite.spritecollideany(side, enemies_group)
             if colided_enemy:
-                if self.set_state('small'):
+                if self.set_state(self.world, 'small'):
                     self.invincibility = 180
                 elif not self.invincibility:
-                    self.set_state('died')
+                    self.set_state(self.world, 'died')
                     self.jump()
                     print("mario, vi sdohli")
                 return
@@ -182,9 +182,9 @@ class Player(BaseCharacter):
         self.top_side.rect = pygame.Rect(self.rect.x + self.max_v, self.rect.y - 1,
                                          self.rect.w - self.max_v * 2, 1)
 
-    def set_state(self, new_state):
-        if self.mario_state != new_state:
-            self.mario_state = new_state
+    def set_state(self, new_type, new_state):
+        if self.mario_state != new_state or self.world != new_type:
+            self.world, self.mario_state = new_type, new_state
             if new_state in self.MARIO_IMAGES[self.world]:
                 self.update_frames()
             return True
