@@ -37,10 +37,11 @@ class Player(BaseCharacter):
         self.r_frames = self.frames
         self.image = self.frames[self.cur_frame]
 
-    def update_frames(self, x, y):
+    def update_frames(self):
+        bottomleft = self.rect.bottomleft
         self.load_frames()
         self.rect = self.image.get_rect()
-        self.rect = self.rect.move(x, y)
+        self.rect.bottomleft = bottomleft
         self.create_sides()
 
     def update(self):
@@ -96,12 +97,10 @@ class Player(BaseCharacter):
         for side in [self.left_side, self.right_side]:
             colided_enemy = pygame.sprite.spritecollideany(side, enemies_group)
             if colided_enemy:
-                if self.mario_state == 'big':
-                    self.mario_state = 'small'
-                    self.update_frames(self.rect.x, self.rect.bottom - self.rect.h // 2)
+                if self.set_state('small'):
                     self.invincibility = 180
-                elif self.mario_state == 'small' and not self.invincibility:
-                    self.mario_state = 'died'
+                elif not self.invincibility:
+                    self.set_state('died')
                     self.jump()
                     print("mario, vi sdohli")
                 return
@@ -182,3 +181,10 @@ class Player(BaseCharacter):
     def update_top_side(self):
         self.top_side.rect = pygame.Rect(self.rect.x + self.max_v, self.rect.y - 1,
                                          self.rect.w - self.max_v * 2, 1)
+
+    def set_state(self, new_state):
+        if self.mario_state != new_state:
+            self.mario_state = new_state
+            if new_state in self.MARIO_IMAGES[self.world]:
+                self.update_frames()
+            return True

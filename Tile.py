@@ -1,12 +1,12 @@
 import pygame
 from Utilities import *
-from Items import UpSizeMushroom
+from Items import *
 import random
 
 
 class Particle(pygame.sprite.Sprite):
     def __init__(self, pos, dx, dy, image):
-        super().__init__(all_sprites)
+        super().__init__(all_sprites, particles_group)
         self.image = pygame.transform.rotate(
             pygame.transform.scale(image, (image.get_width() // 2, image.get_height() // 2)),
             random.randint(30, 60))
@@ -26,7 +26,8 @@ class Particle(pygame.sprite.Sprite):
 
 
 class TilesBase(pygame.sprite.Sprite):
-    ITEMS = {'upsizemushroom': UpSizeMushroom}
+    ITEMS = {'MushroomSizeUp': MushroomSizeUp, 'MushroomLiveUp': MushroomLiveUp,
+             'MushroomDeadly': MushroomDeadly, 'FireFlower': FireFlower}
     IMAGES = {name: surf for name, surf in
               zip(['normal', 'underground', 'castle', 'underwater'],
                   cut_sheet(load_image("Tile.png"), 10, 4))}
@@ -128,7 +129,7 @@ class Quest(TilesBase):
         self.item = item
         self.moving = False
         self.start_y = self.rect.y
-        self.end_y = self.start_y - 14
+        self.end_y = self.start_y - self.rect.h // 3
 
     def update(self):
         if self.image is not self.frames[3]:
@@ -138,7 +139,7 @@ class Quest(TilesBase):
 
     def interact(self, mario_state):
         if self.item:
-            TilesBase.ITEMS[self.item](self.rect.x, self.rect.y - 48, self.world)
+            TilesBase.ITEMS[self.item](self.rect.x, self.end_y, self.world)
             self.item = None
             self.moving = True
 

@@ -58,7 +58,7 @@ for y in bricks:
 
 for y in quests:
     for x in quests[y]:
-        Quest(x, y, world, 'upsizemushroom')
+        Quest(x, y, world, 'FireFlower')
 
 for y in stones:
     for x in stones[y]:
