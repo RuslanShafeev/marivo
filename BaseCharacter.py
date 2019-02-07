@@ -7,10 +7,6 @@ class BaseCharacter(pygame.sprite.Sprite):
                zip(['normal', 'underground', 'castle', 'underwater'],
                    cut_sheet(load_image("Goomba.png"), 3, 4))}
 
-    ITEMS = {name: surf for name, surf in
-             zip(['normal', 'underground', 'castle', 'underwater'],
-                 cut_sheet(load_image("Items.png"), 19, 4))}
-
     def __init__(self, x, y, *groups):
         super().__init__(*groups)
         self.rect = self.image.get_rect()

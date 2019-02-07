@@ -27,7 +27,7 @@ class Particle(pygame.sprite.Sprite):
 
 class TilesBase(pygame.sprite.Sprite):
     ITEMS = {'MushroomSizeUp': MushroomSizeUp, 'MushroomLiveUp': MushroomLiveUp,
-             'MushroomDeadly': MushroomDeadly, 'FireFlower': FireFlower}
+             'MushroomDeadly': MushroomDeadly, 'FireFlower': FireFlower, 'Star': Star, 'Coin': Coin}
     IMAGES = {name: surf for name, surf in
               zip(['normal', 'underground', 'castle', 'underwater'],
                   cut_sheet(load_image("Tile.png"), 10, 4))}
@@ -83,6 +83,7 @@ class PavingStone(TilesBase):
 
 class Brick(TilesBase):
     def __init__(self, x, y, world, item=None):
+        self.world = world
         self.image = TilesBase.IMAGES[world][1]
         self.stone_image = TilesBase.IMAGES[world][9]
         super().__init__(x, y)
@@ -95,7 +96,10 @@ class Brick(TilesBase):
     def interact(self, mario_state):
         if self.rect.y == self.start_y and self.image is not self.stone_image:
             if self.items:
-                print(self.items.pop())
+                item_obj = TilesBase.ITEMS[self.items.pop()]
+                if item_obj is FireFlower and mario_state == 'small':
+                    item_obj = MushroomSizeUp
+                item_obj(self.rect.x, self.end_y, self.world)
                 if not self.items:
                     self.image = self.stone_image
                 self.moving = True
@@ -139,7 +143,10 @@ class Quest(TilesBase):
 
     def interact(self, mario_state):
         if self.item:
-            TilesBase.ITEMS[self.item](self.rect.x, self.end_y, self.world)
+            item_obj = TilesBase.ITEMS[self.item]
+            if item_obj is FireFlower and mario_state == 'small':
+                item_obj = MushroomSizeUp
+            item_obj(self.rect.x, self.end_y, self.world)
             self.item = None
             self.moving = True
 

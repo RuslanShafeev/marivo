@@ -8,13 +8,15 @@ from BaseCharacter import BaseCharacter
 class Player(BaseCharacter):
     def __init__(self, x, y, world):
         self.world = world
-        self.mario_state = 'big'
+        self.type = self.world
+        self.state = 'big'
         self.MARIO_IMAGES = self.load_images()
         self.load_frames()
         super().__init__(x, y, players_group)
 
         self.vx = 0
         self.a = 0.5
+        self.died = False
         self.invincibility = 0  # Время неуязвимости в кадрах
 
         self.max_jumps = 17
@@ -32,7 +34,7 @@ class Player(BaseCharacter):
 
     def load_frames(self):
         self.cur_frame = 0
-        self.frames = self.MARIO_IMAGES[self.world][self.mario_state]
+        self.frames = self.MARIO_IMAGES[self.type][self.state]
         self.l_frames = [pygame.transform.flip(frame, True, False) for frame in self.frames]
         self.r_frames = self.frames
         self.image = self.frames[self.cur_frame]
@@ -50,7 +52,7 @@ class Player(BaseCharacter):
         self.vx = max(min(self.vx, self.max_v), -self.max_v)
         self.update_coords()
 
-        if self.mario_state == 'died':
+        if self.died:
             self.image = self.frames[5]
             self.jump()
             return
@@ -86,7 +88,7 @@ class Player(BaseCharacter):
         colided_tile = pygame.sprite.spritecollideany(self.top_side, tiles_group)
         if colided_tile:
             self.cur_jump = self.max_jumps
-            colided_tile.interact(self.mario_state)
+            colided_tile.interact(self.state)
 
             self.rect.y = colided_tile.rect.bottom
             self.vy = max(0, self.vy)
@@ -100,7 +102,7 @@ class Player(BaseCharacter):
                 if self.set_state(self.world, 'small'):
                     self.invincibility = 180
                 elif not self.invincibility:
-                    self.set_state(self.world, 'died')
+                    self.died = True
                     self.jump()
                     print("mario, vi sdohli")
                 return
@@ -154,7 +156,7 @@ class Player(BaseCharacter):
                     self.jump()
                     any_key_pressed = True
 
-        if self.mario_state == 'died':
+        if self.died:
             return
 
         if self.cur_jump and not any_key_pressed:
@@ -183,8 +185,7 @@ class Player(BaseCharacter):
                                          self.rect.w - self.max_v * 2, 1)
 
     def set_state(self, new_type, new_state):
-        if self.mario_state != new_state or self.world != new_type:
-            self.world, self.mario_state = new_type, new_state
-            if new_state in self.MARIO_IMAGES[self.world]:
-                self.update_frames()
+        if self.state != new_state or self.type != new_type:
+            self.type, self.state = new_type, new_state
+            self.update_frames()
             return True

@@ -3,7 +3,6 @@ from Utilities import *
 from Map import *
 from Hud import Hud
 
-
 TEXT_SIZE = 40
 hud_texts = ["SCORE", 0, "TIME", 400, "WORLD", "1-1", "COINS", 0, "LIVES", 3]
 huds = [None] * 5
