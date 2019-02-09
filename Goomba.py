@@ -13,7 +13,7 @@ class Goomba(BaseCharacter):
         self.frames = BaseCharacter.ENEMIES[world]
         self.image = self.frames[self.cur_frame]
 
-        super().__init__(x, y, all_sprites, enemies_group)
+        super().__init__((x - 1) * PPM, y * PPM, all_sprites, enemies_group)
         self.vx = -1
 
     def update(self):

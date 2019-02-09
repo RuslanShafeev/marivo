@@ -22,6 +22,8 @@ class Player(BaseCharacter):
         self.max_jumps = 17
         self.cur_jump = 0
 
+        self.last_enemy = None
+
     def load_images(self):
         images = {}
         for name, s_surf, b_surf in zip(['normal', 'fire', 'luigi', 'star_1', 'star_2', 'star_3',
@@ -105,6 +107,7 @@ class Player(BaseCharacter):
                     self.died = True
                     self.jump()
                     print("mario, vi sdohli")
+                    Map.add_lives(-1)
                 return
 
         colided_enemy = pygame.sprite.spritecollideany(self.down_side, enemies_group)
@@ -113,7 +116,10 @@ class Player(BaseCharacter):
             self.vy = min(0, self.vy)
             self.update_sides()
             self.cur_jump = 0
-            if isinstance(colided_enemy, Goomba):
+            if isinstance(colided_enemy, Goomba) and self.last_enemy != colided_enemy:
+                self.show_points(colided_enemy, 200)
+                Map.add_score(200)
+                self.last_enemy = colided_enemy
                 colided_enemy.die()
 
     def jump(self):

@@ -1,5 +1,4 @@
 import pygame
-import os
 
 
 class Hud:
@@ -27,6 +26,9 @@ class Hud:
         self.value_rect = self.value_render.get_rect()
         self.value_rect.left = self.x - self.value_rect.w // 2
         self.value_rect.top = self.y + int(self.title_rect.h)
+
+    def get_value(self):
+        return self.value
 
     def draw(self, screen):
         screen.blit(self.title_render, self.title_rect)

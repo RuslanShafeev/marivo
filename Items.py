@@ -1,6 +1,8 @@
 import pygame
 from Utilities import *
 from BaseCharacter import BaseCharacter
+import Map
+from PointsUp import PointsUp
 
 
 class ItemBase(BaseCharacter):
@@ -34,6 +36,9 @@ class ItemBase(BaseCharacter):
 
         self.sides_group.draw(screen)
 
+    def show_points(self, collided, points):
+        Map.scores.append(PointsUp(collided.rect.left, collided.rect.top, points, Map.scores))
+
 
 class MushroomSizeUp(ItemBase):
     def __init__(self, x, y, world):
@@ -43,8 +48,10 @@ class MushroomSizeUp(ItemBase):
     def check_player_collisions(self):
         collided = pygame.sprite.spritecollideany(self, players_group)
         if collided:
-            collided.set_state('big')
+            collided.set_state(world, 'big')
             print('+1000 Score')
+            self.show_points(collided, 1000)
+            Map.add_score(1000)
             self.kill()
 
     def create_top_side(self):
@@ -63,6 +70,7 @@ class MushroomLiveUp(ItemBase):
         collided = pygame.sprite.spritecollideany(self, players_group)
         if collided:
             print('+1 live')
+            Map.add_lives(1)
             self.kill()
 
     def create_top_side(self):
@@ -83,6 +91,7 @@ class MushroomDeadly(ItemBase):
             collided.set_state('small')
             collided.died = True
             print('-1 live')
+            Map.add_lives(-1)
             self.kill()
 
     def create_top_side(self):
@@ -180,6 +189,8 @@ class CoinStatic(pygame.sprite.Sprite):
         if collided:
             print('+1 coins')
             print('+200 score')
+            Map.add_score(200)
+            Map.add_coins(1)
             self.kill()
 
 
@@ -192,6 +203,8 @@ class Coin(CoinStatic):
 
         print('+1 coins')
         print('+200 score')
+        Map.add_score(200)
+        Map.add_coins(1)
 
     def update(self):
         super().update()

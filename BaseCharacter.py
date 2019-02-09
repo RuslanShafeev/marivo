@@ -1,5 +1,7 @@
 import pygame
 from Utilities import *
+import Map
+from PointsUp import PointsUp
 
 
 class BaseCharacter(pygame.sprite.Sprite):
@@ -80,3 +82,6 @@ class BaseCharacter(pygame.sprite.Sprite):
                                           self.rect.h - self.max_v * 2)
         self.right_side.rect = pygame.Rect(self.rect.right, self.rect.y + self.max_v, 1,
                                            self.rect.h - self.max_v * 2)
+
+    def show_points(self, collided, points):
+        Map.scores.append(PointsUp(collided.rect.left, collided.rect.top, points, Map.scores))
