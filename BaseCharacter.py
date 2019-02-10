@@ -5,21 +5,18 @@ from PointsUp import PointsUp
 
 
 class BaseCharacter(pygame.sprite.Sprite):
-    ENEMIES = {name: surf for name, surf in
-               zip(['normal', 'underground', 'castle', 'underwater'],
-                   cut_sheet(load_image("Goomba.png"), 3, 4))}
-
     def __init__(self, x, y, *groups):
         super().__init__(*groups)
         self.rect = self.image.get_rect()
         self.rect = self.rect.move(x, y)
-        self.max_v = 10
+        self.max_vy = 10
         self.vy = 0
         self.create_sides()
+        self.gravity = GRAVITY
 
     def update_coords(self):
-        self.vy += GRAVITY
-        self.vy = max(min(self.vy, self.max_v), -self.max_v)
+        self.vy += self.gravity
+        self.vy = max(min(self.vy, self.max_vy), -self.max_vy)
         self.rect = self.rect.move(self.vx, self.vy)
 
     def check_tile_collisions(self):
@@ -70,18 +67,15 @@ class BaseCharacter(pygame.sprite.Sprite):
 
         self.down_side.image = pygame.Surface((self.rect.w, 1))
         self.down_side.image.fill((0, 255, 0))
-        self.left_side.image = pygame.Surface((1, self.rect.h - self.max_v * 2))
+        self.left_side.image = pygame.Surface((1, self.rect.h - self.max_vy * 2))
         self.left_side.image.fill((0, 255, 0))
-        self.right_side.image = pygame.Surface((1, self.rect.h - self.max_v * 2))
+        self.right_side.image = pygame.Surface((1, self.rect.h - self.max_vy * 2))
         self.right_side.image.fill((0, 255, 0))
 
     def update_sides(self):
         self.update_top_side()
         self.down_side.rect = pygame.Rect(self.rect.x, self.rect.bottom, self.rect.w, 1)
-        self.left_side.rect = pygame.Rect(self.rect.x - 1, self.rect.y + self.max_v, 1,
-                                          self.rect.h - self.max_v * 2)
-        self.right_side.rect = pygame.Rect(self.rect.right, self.rect.y + self.max_v, 1,
-                                           self.rect.h - self.max_v * 2)
-
-    def show_points(self, collided, points):
-        Map.scores.append(PointsUp(collided.rect.left, collided.rect.top, points, Map.scores))
+        self.left_side.rect = pygame.Rect(self.rect.x - 1, self.rect.y + self.max_vy, 1,
+                                          self.rect.h - self.max_vy * 2)
+        self.right_side.rect = pygame.Rect(self.rect.right, self.rect.y + self.max_vy, 1,
+                                           self.rect.h - self.max_vy * 2)

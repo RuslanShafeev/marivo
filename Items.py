@@ -50,8 +50,8 @@ class MushroomSizeUp(ItemBase):
         if collided:
             collided.set_state(world, 'big')
             print('+1000 Score')
-            self.show_points(collided, 1000)
-            Map.add_score(1000)
+            PointsUp(*collided.rect.topleft, 1000)
+            hud.add_score(1000)
             self.kill()
 
     def create_top_side(self):
@@ -70,7 +70,7 @@ class MushroomLiveUp(ItemBase):
         collided = pygame.sprite.spritecollideany(self, players_group)
         if collided:
             print('+1 live')
-            Map.add_lives(1)
+            hud.add_lives(1)
             self.kill()
 
     def create_top_side(self):
@@ -91,7 +91,7 @@ class MushroomDeadly(ItemBase):
             collided.set_state('small')
             collided.died = True
             print('-1 live')
-            Map.add_lives(-1)
+            hud.add_lives(-1)
             self.kill()
 
     def create_top_side(self):
@@ -189,8 +189,8 @@ class CoinStatic(pygame.sprite.Sprite):
         if collided:
             print('+1 coins')
             print('+200 score')
-            Map.add_score(200)
-            Map.add_coins(1)
+            hud.add_score(200)
+            hud.add_coins(1)
             self.kill()
 
 
@@ -203,8 +203,8 @@ class Coin(CoinStatic):
 
         print('+1 coins')
         print('+200 score')
-        Map.add_score(200)
-        Map.add_coins(1)
+        hud.add_score(200)
+        hud.add_coins(1)
 
     def update(self):
         super().update()

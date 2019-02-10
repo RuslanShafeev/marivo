@@ -2,13 +2,14 @@ from Tile import *
 from Player import Player
 from Goomba import Goomba
 from Tube import Tube
-from Camera import Camera
-from Hud import Hud
+from Koopa import *
 
 world = 'normal'
 
 WIDTH = 212
 HEIGHT = 14
+
+scores = []
 
 bricks = {
     5: [80, 81, 82, 83, 84, 85, 86, 87, 91, 92, 93, 121, 122, 123, 128, 131],
@@ -47,45 +48,9 @@ empty = [69, 70, 86, 88, 153, 154]
 goombas = {
     12: [21, 40, 52, 54, 95, 96, 123, 125, 126, 128]
 }
-
-TEXT_SIZE = 40
-hud_texts = ["SCORE", 0, "TIME", 400, "WORLD", "1-1", "COINS", 0, "LIVES", 3]
-huds = [None] * 5
-dx = SIZE[0] // 6
-for i in range(5):
-    huds[i] = Hud(dx * (i + 1), 20, hud_texts[2 * i], hud_texts[2 * i + 1], TEXT_SIZE)
-
-
-def add_score(score):
-    set_score(int(huds[0].get_value()) + score)
-
-
-def set_score(score):
-    huds[0].set_value(score)
-
-
-def add_coins(coins):
-    set_coins(int(huds[3].get_value()) + coins)
-
-
-def set_coins(coins):
-    huds[3].set_value(coins)
-
-
-def add_lives(lives):
-    set_lives(int(huds[4].get_value()) + lives)
-
-def set_lives(lives):
-    huds[4].set_value(lives)
-
-def tick():
-    huds[1].set_value(int(huds[1].get_value()) - 1)
-
-scores = []
+JumpingKoopa(1800, 300, world)
 
 player = Player(150, 100, world)
-
-camera = Camera()
 
 for y in goombas:
     for x in goombas[y]:

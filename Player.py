@@ -12,7 +12,9 @@ class Player(BaseCharacter):
         self.state = 'big'
         self.MARIO_IMAGES = self.load_images()
         self.load_frames()
+        self.max_vx = 10
         super().__init__(x, y, players_group)
+
 
         self.vx = 0
         self.a = 0.5
@@ -51,7 +53,7 @@ class Player(BaseCharacter):
     def update(self):
         self.cur_frame = (self.cur_frame + 1) % 60
         self.invincibility = max(0, self.invincibility - 1)
-        self.vx = max(min(self.vx, self.max_v), -self.max_v)
+        self.vx = max(min(self.vx, self.max_vx), -self.max_vx)
         self.update_coords()
 
         if self.died:
@@ -105,9 +107,10 @@ class Player(BaseCharacter):
                     self.invincibility = 180
                 elif not self.invincibility:
                     self.died = True
+                    self.cur_jump = 0
                     self.jump()
                     print("mario, vi sdohli")
-                    Map.add_lives(-1)
+                    hud.add_lives(-1)
                 return
 
         colided_enemy = pygame.sprite.spritecollideany(self.down_side, enemies_group)
@@ -116,15 +119,13 @@ class Player(BaseCharacter):
             self.vy = min(0, self.vy)
             self.update_sides()
             self.cur_jump = 0
-            if isinstance(colided_enemy, Goomba) and self.last_enemy != colided_enemy:
-                self.show_points(colided_enemy, 200)
-                Map.add_score(200)
-                self.last_enemy = colided_enemy
-                colided_enemy.die()
+            self.jump()
+            colided_enemy.die(1)
+
 
     def jump(self):
         if self.cur_jump < self.max_jumps:
-            self.vy = -self.max_v
+            self.vy = -self.max_vy
             self.cur_jump += 1
 
     def right(self):
@@ -183,12 +184,12 @@ class Player(BaseCharacter):
 
     def create_top_side(self):
         self.top_side = pygame.sprite.Sprite(self.sides_group)
-        self.top_side.image = pygame.Surface((self.rect.w - self.max_v * 2, 1))
+        self.top_side.image = pygame.Surface((self.rect.w - self.max_vx * 2, 1))
         self.top_side.image.fill((0, 255, 0))
 
     def update_top_side(self):
-        self.top_side.rect = pygame.Rect(self.rect.x + self.max_v, self.rect.y - 1,
-                                         self.rect.w - self.max_v * 2, 1)
+        self.top_side.rect = pygame.Rect(self.rect.x + self.max_vx, self.rect.y - 1,
+                                         self.rect.w - self.max_vx * 2, 1)
 
     def set_state(self, new_type, new_state):
         if self.state != new_state or self.type != new_type:

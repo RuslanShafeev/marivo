@@ -1,16 +1,21 @@
 import pygame
 from Utilities import *
+from PointsUp import PointsUp
 from BaseCharacter import BaseCharacter
 
 
 class Goomba(BaseCharacter):
+    IMAGES = {name: surf for name, surf in
+              zip(['normal', 'underground', 'castle', 'underwater'],
+                  cut_sheet(load_image("Goomba.png"), 3, 4))}
+
     def __init__(self, x, y, world):
         self.smert = 0
         self.SMERT_TIME = 5
 
         self.cur_frame = 0
 
-        self.frames = BaseCharacter.ENEMIES[world]
+        self.frames = Goomba.IMAGES[world]
         self.image = self.frames[self.cur_frame]
 
         super().__init__((x - 1) * PPM, y * PPM, all_sprites, enemies_group)
@@ -32,6 +37,8 @@ class Goomba(BaseCharacter):
         self.check_enemies_collisions()
         self.sides_group.draw(screen)
 
-    def die(self):
+    def die(self, rate):
         self.image = self.frames[2]
         self.smert = max(1, self.smert)
+        PointsUp(*self.rect.topleft, 100 * rate)
+        hud.add_score(100 * rate)
