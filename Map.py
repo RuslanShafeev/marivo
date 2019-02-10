@@ -3,6 +3,8 @@ from Player import Player
 from Goomba import Goomba
 from Tube import Tube
 from Koopa import *
+from Castle import Castle
+from FlagPole import *
 
 world = 'normal'
 
@@ -40,17 +42,22 @@ stones = {
     11: [135, 136, 137, 140, 141, 142, 149, 150, 151, 152, 155, 156, 157] +
         [182, 183, 184, 185, 186, 187, 188, 189],
     12: [134, 135, 136, 137, 140, 141, 142, 143, 148, 149, 150, 151, 152, 155, 156, 157, 158] +
-        [181, 182, 183, 184, 185, 186, 187, 188, 189]
+        [181, 182, 183, 184, 185, 186, 187, 188, 189, 198]
 }
 
 empty = [69, 70, 86, 88, 153, 154]
 
 goombas = {
-    12: [21, 40, 52, 54, 95, 96, 123, 125, 126, 128]
+    12: [21, 40, 52, 54, 95, 96, 123, 125, 126, 128, 173, 175]
 }
-JumpingKoopa(1800, 300, world)
+Koopa(106 * PPM, 300, world)
 
-player = Player(150, 100, world)
+# player = Player(150, 100, world)
+player = Player(9000, 100, world)
+
+CASTLE_X = 204
+CastleA = Castle(CASTLE_X, 12, False)
+FlagPole(198, 12)
 
 for y in goombas:
     for x in goombas[y]:

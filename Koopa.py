@@ -63,7 +63,7 @@ class Koopa(BaseCharacter):
             self.vx = 0
         else:
             if not self.vx:
-                self.vx = 15
+                self.vx = 10
             else:
                 PointsUp(*self.rect.topleft, 400 * rate)
                 hud.add_score(400 * rate)

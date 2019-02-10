@@ -154,7 +154,7 @@ class Star(ItemBase):
         self.cur_frame = (self.cur_frame + 1) % 60
         self.image = self.frames[self.cur_frame // 5 % 4]
         if self.cur_jump < self.max_jumps:
-            self.vy = - self.max_v
+            self.vy = - self.max_vy
             self.cur_jump += 1
         super().update()
         if pygame.sprite.spritecollideany(self.down_side, tiles_group):

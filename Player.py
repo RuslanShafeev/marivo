@@ -3,6 +3,8 @@ from Utilities import *
 from Map import *
 from Goomba import Goomba
 from BaseCharacter import BaseCharacter
+from Castle import Castle
+from FlagPole import *
 
 
 class Player(BaseCharacter):
@@ -25,6 +27,8 @@ class Player(BaseCharacter):
         self.cur_jump = 0
 
         self.last_enemy = None
+        self.flagpoled = -1
+        self.end_speed = 4
 
     def load_images(self):
         images = {}
@@ -54,7 +58,15 @@ class Player(BaseCharacter):
         self.cur_frame = (self.cur_frame + 1) % 60
         self.invincibility = max(0, self.invincibility - 1)
         self.vx = max(min(self.vx, self.max_vx), -self.max_vx)
+        if self.flagpoled == 1:
+            if self.rect.x >= Map.CastleA.get_centre():
+                self.kill()
+            self.rect.x += self.end_speed
+            self.image = self.frames[self.cur_frame // 5 % 3]
         self.update_coords()
+
+        if self.flagpoled == 0 and self.rect.y >= PPM * 10:
+            self.flagpoled = 1
 
         if self.died:
             self.image = self.frames[5]
@@ -63,6 +75,7 @@ class Player(BaseCharacter):
 
         self.check_tile_collisions()
         self.check_enemies_collisions()
+        self.check_flagpole_collision()
 
         self.sides_group.draw(screen)
 
@@ -122,13 +135,27 @@ class Player(BaseCharacter):
             self.jump()
             colided_enemy.die(1)
 
+    def check_flagpole_collision(self):
+        self.update_sides()
+        if self.flagpoled > -1:
+            return
+        colided_flagpole = pygame.sprite.spritecollideany(self.right_side, castle_group)
+        if colided_flagpole:
+            if isinstance(colided_flagpole, FlagPole):
+                self.flagpoled = 0
+                self.vx = 0
+                self.rect.x = colided_flagpole.rect.x - PPM // 2
 
     def jump(self):
+        if self.flagpoled >= 0:
+            return
         if self.cur_jump < self.max_jumps:
             self.vy = -self.max_vy
             self.cur_jump += 1
 
     def right(self):
+        if self.flagpoled >= 0:
+            return
         if self.frames is not self.r_frames:
             self.frames = self.r_frames
 
@@ -141,6 +168,8 @@ class Player(BaseCharacter):
         self.vx += self.a
 
     def left(self):
+        if self.flagpoled >= 0:
+            return
         if self.frames is not self.l_frames:
             self.frames = self.l_frames
         if self.vx > 0:

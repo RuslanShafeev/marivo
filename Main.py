@@ -20,6 +20,7 @@ while True:
 
     items_group.draw(screen)
     enemies_group.draw(screen)
+    castle_group.draw(screen)
     tiles_group.draw(screen)
     players_group.draw(screen)
     particles_group.draw(screen)
