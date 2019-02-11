@@ -16,7 +16,7 @@ while True:
 
     players_group.update()
     all_sprites.update()
-    hud.update(cur_frame)
+    hud.update()
 
     items_group.draw(screen)
     enemies_group.draw(screen)
@@ -25,11 +25,6 @@ while True:
     players_group.draw(screen)
     particles_group.draw(screen)
     hud.draw(screen)
-
-    for scores_txt in scores:
-        scores_txt.draw(screen)
-
-    cur_frame = (cur_frame + 1) % 60
 
     pygame.display.flip()
     time.tick(FPS)

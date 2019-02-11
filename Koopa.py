@@ -5,17 +5,22 @@ from PointsUp import PointsUp
 
 
 class Koopa(BaseCharacter):
-    IMAGES = {name: surf for name, surf in
+    IMAGES = {name: (surf1 + surf2) for name, surf1, surf2 in
               zip(['normal', 'underground', 'castle', 'underwater'],
-                  cut_sheet(load_image("Koopa.png"), 6, 4))}
-    L_KOOPA = {key: (images[:2] + [img.convert_alpha() for img in images[4:6]]) for key, images in
+                  cut_sheet(load_image("Koopa.png"), 4, 4),
+                  cut_sheet(load_image("Koopa_hidden.png"), 2, 4))}
+
+    L_KOOPA = {key: (list(images[:2]) + [img.convert_alpha() for img in images[4:6]]) for
+               key, images in
                IMAGES.items()}
     R_KOOPA = {key: [pygame.transform.flip(frame, True, False) for frame in images]
                for key, images in L_KOOPA.items()}
 
     def __init__(self, x, y, world):
         self.smert = 0
+
         self.REVIVAL_TIME = 60 * 6
+
         self.SMERT_TIME = 60 * 8
         self.cur_frame = 0
 
@@ -24,10 +29,12 @@ class Koopa(BaseCharacter):
         super().__init__(x, y, all_sprites, enemies_group)
         self.vx = -2
 
+
     def load_frames(self):
         self.l_frames = Koopa.L_KOOPA[world]
         self.r_frames = Koopa.R_KOOPA[world]
         self.frames = self.l_frames
+
 
     def load_image(self, index):
         topleft = self.rect.topleft
@@ -35,6 +42,7 @@ class Koopa(BaseCharacter):
         self.rect = self.image.get_rect()
         self.rect.topleft = topleft
         self.update_sides()
+
 
     def update(self):
         self.update_coords()
@@ -56,6 +64,7 @@ class Koopa(BaseCharacter):
             self.cur_frame = (self.cur_frame + 1) % 60
             self.image = self.frames[self.cur_frame // 15 % 2]
 
+
     def die(self, rate):
         if not self.smert:
             self.load_image(2)
@@ -63,16 +72,17 @@ class Koopa(BaseCharacter):
             self.vx = 0
         else:
             if not self.vx:
-                self.vx = 10
+               self.vx = 10
             else:
                 PointsUp(*self.rect.topleft, 400 * rate)
                 hud.add_score(400 * rate)
                 self.kill()
 
+
     def check_enemies_collisions(self):
         if self.smert and self.vx:
-            [enemy.die(4) if enemy is not self else None for enemy in
-             pygame.sprite.spritecollide(self, enemies_group, False)]
+            [enemy.die(2) if enemy is not self else None for enemy in
+            pygame.sprite.spritecollide(self, enemies_group, False)]
         else:
             super().check_enemies_collisions()
 
@@ -107,3 +117,12 @@ class JumpingKoopa(Koopa):
     def die(self, rate):
         Koopa(self.rect.x, self.rect.y, self.world).die(rate)
         self.kill()
+
+    def check_tile_collisions(self):
+        super().check_tile_collisions()
+        colided_tile = pygame.sprite.spritecollideany(self.top_side, tiles_group)
+        if colided_tile:
+            self.cur_jump = self.max_jumps
+            self.rect.y = colided_tile.rect.bottom
+            self.vy = max(0, self.vy)
+            self.update_sides()

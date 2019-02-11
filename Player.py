@@ -5,6 +5,7 @@ from Goomba import Goomba
 from BaseCharacter import BaseCharacter
 from Castle import Castle
 from FlagPole import *
+from Items import Fire
 
 
 class Player(BaseCharacter):
@@ -13,20 +14,23 @@ class Player(BaseCharacter):
         self.type = self.world
         self.state = 'big'
         self.MARIO_IMAGES = self.load_images()
+        self.alpha_surface = pygame.Surface((1, 1), pygame.SRCALPHA)
         self.load_frames()
-        self.max_vx = 10
+        self.max_vx = 5
         super().__init__(x, y, players_group)
-
 
         self.vx = 0
         self.a = 0.5
         self.died = False
+        self.killing = False
+        self.killing_rate = 1
         self.invincibility = 0  # Время неуязвимости в кадрах
+        self.blinking = 0
+        self.blinking_freq = 30
 
         self.max_jumps = 17
         self.cur_jump = 0
 
-        self.last_enemy = None
         self.flagpoled = -1
         self.end_speed = 4
 
@@ -56,13 +60,14 @@ class Player(BaseCharacter):
 
     def update(self):
         self.cur_frame = (self.cur_frame + 1) % 60
-        self.invincibility = max(0, self.invincibility - 1)
+        self.update_invincibility()
         self.vx = max(min(self.vx, self.max_vx), -self.max_vx)
         if self.flagpoled == 1:
             if self.rect.x >= Map.CastleA.get_centre():
                 self.kill()
             self.rect.x += self.end_speed
-            self.image = self.frames[self.cur_frame // 5 % 3]
+            self.cur_jump = self.max_jumps
+            self.walking()
         self.update_coords()
 
         if self.flagpoled == 0 and self.rect.y >= PPM * 10:
@@ -77,7 +82,21 @@ class Player(BaseCharacter):
         self.check_enemies_collisions()
         self.check_flagpole_collision()
 
+        self.update_blincking()
+
         self.sides_group.draw(screen)
+
+    def update_invincibility(self):
+        if self.invincibility:
+            self.invincibility -= 1
+            if not self.invincibility:
+                self.killing = False
+
+    def update_blincking(self):
+        if self.blinking:
+            self.blinking -= 1
+            if self.cur_frame // (100 / self.blinking_freq) % 2:
+                self.image = self.alpha_surface
 
     def check_tile_collisions(self):
         self.update_sides()
@@ -99,6 +118,7 @@ class Player(BaseCharacter):
             self.vy = min(0, self.vy)
             self.update_sides()
             self.cur_jump = 0
+            self.killing_rate = 1
         else:
             self.image = self.frames[4]
 
@@ -113,27 +133,29 @@ class Player(BaseCharacter):
 
     def check_enemies_collisions(self):
         self.update_sides()
+        if self.killing:
+            colided_enemies = pygame.sprite.spritecollide(self, enemies_group, False)
+            [enemy.die(len(colided_enemies) // 2) for enemy in colided_enemies]
+            return
         for side in [self.left_side, self.right_side]:
             colided_enemy = pygame.sprite.spritecollideany(side, enemies_group)
             if colided_enemy:
                 if self.set_state(self.world, 'small'):
-                    self.invincibility = 180
+                    self.become_invincible(120)
                 elif not self.invincibility:
-                    self.died = True
-                    self.cur_jump = 0
-                    self.jump()
-                    print("mario, vi sdohli")
-                    hud.add_lives(-1)
+                    self.die()
                 return
 
-        colided_enemy = pygame.sprite.spritecollideany(self.down_side, enemies_group)
-        if colided_enemy and self.vy > 0:
-            self.rect.bottom = colided_enemy.rect.y
+        colided_enemies = pygame.sprite.spritecollide(self.down_side, enemies_group, False)
+        if colided_enemies and self.vy > 0:
+            self.rect.bottom = colided_enemies[0].rect.y
             self.vy = min(0, self.vy)
             self.update_sides()
             self.cur_jump = 0
             self.jump()
-            colided_enemy.die(1)
+            self.killing_rate = max(self.killing_rate, len(colided_enemies) ** 2)
+            [enemy.die(self.killing_rate) for enemy in colided_enemies]
+            self.killing_rate += 1
 
     def check_flagpole_collision(self):
         self.update_sides()
@@ -147,38 +169,35 @@ class Player(BaseCharacter):
                 self.rect.x = colided_flagpole.rect.x - PPM // 2
 
     def jump(self):
-        if self.flagpoled >= 0:
-            return
         if self.cur_jump < self.max_jumps:
             self.vy = -self.max_vy
             self.cur_jump += 1
 
     def right(self):
-        if self.flagpoled >= 0:
-            return
         if self.frames is not self.r_frames:
             self.frames = self.r_frames
 
         if self.vx < 0:
             self.image = self.frames[3]
         elif self.vx:
-            self.image = self.frames[self.cur_frame // 5 % 3]
+            self.walking()
         else:
             self.image = self.frames[6]
         self.vx += self.a
 
     def left(self):
-        if self.flagpoled >= 0:
-            return
         if self.frames is not self.l_frames:
             self.frames = self.l_frames
         if self.vx > 0:
             self.image = self.frames[3]
         elif self.vx:
-            self.image = self.frames[self.cur_frame // 5 % 3]
+            self.walking()
         else:
             self.image = self.frames[6]
         self.vx -= self.a
+
+    def walking(self):
+        self.image = self.frames[self.cur_frame * abs(self.max_vx) // 50 % 3]
 
     def process_events(self, events_list):
         any_key_pressed = False
@@ -192,8 +211,14 @@ class Player(BaseCharacter):
                     self.jump()
                     any_key_pressed = True
 
-        if self.died:
+                elif event.key == pygame.K_x and self.type == 'fire':
+                    Fire(*self.rect.center, 1 if self.frames is self.r_frames else -1)
+
+
+        if self.died or self.flagpoled >= 0:
             return
+
+        self.max_vx = 10 if pygame.key.get_pressed()[pygame.K_LSHIFT] else 5
 
         if self.cur_jump and not any_key_pressed:
             if pygame.key.get_pressed()[pygame.K_UP]:
@@ -208,20 +233,41 @@ class Player(BaseCharacter):
                 any_key_pressed = True
 
         if not any_key_pressed:
-            self.vx -= self.vx // max(abs(self.vx), 1) * self.a
-            self.image = self.frames[6]
+            if abs(self.a) <= abs(self.vx):
+                self.vx -= 1 if self.vx > 0 else -1 * self.a
+                self.walking()
+            else:
+                self.vx = 0
+                self.image = self.frames[6]
 
     def create_top_side(self):
         self.top_side = pygame.sprite.Sprite(self.sides_group)
-        self.top_side.image = pygame.Surface((self.rect.w - self.max_vx * 2, 1))
+        self.top_side.image = pygame.Surface((self.rect.w // 2, 1))
         self.top_side.image.fill((0, 255, 0))
 
     def update_top_side(self):
-        self.top_side.rect = pygame.Rect(self.rect.x + self.max_vx, self.rect.y - 1,
-                                         self.rect.w - self.max_vx * 2, 1)
+        self.top_side.rect = pygame.Rect(self.rect.x + self.rect.w // 4, self.rect.y - 1,
+                                         self.rect.w // 2, 1)
 
     def set_state(self, new_type, new_state):
         if self.state != new_state or self.type != new_type:
             self.type, self.state = new_type, new_state
             self.update_frames()
+            self.blinking = 120
+            self.blinking_freq = 30
             return True
+
+    def die(self):
+        self.vx = 0
+        self.set_state(self.world, 'small')
+        self.died = True
+        self.cur_jump = 0
+        self.jump()
+        hud.add_lives(-1)
+
+    def become_invincible(self, time, killing=False):
+        self.killing = killing
+        self.invincibility = time
+        if killing:
+            self.blinking = time
+            self.blinking_freq = 10

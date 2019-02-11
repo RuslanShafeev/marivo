@@ -88,10 +88,7 @@ class MushroomDeadly(ItemBase):
     def check_player_collisions(self):
         collided = pygame.sprite.spritecollideany(self, players_group)
         if collided:
-            collided.set_state('small')
-            collided.died = True
-            print('-1 live')
-            hud.add_lives(-1)
+            collided.die()
             self.kill()
 
     def create_top_side(self):
@@ -163,8 +160,17 @@ class Star(ItemBase):
     def check_player_collisions(self):
         collided = pygame.sprite.spritecollideany(self, players_group)
         if collided:
-            print('invincibility')
+            collided.become_invincible(600, True)
             self.kill()
+
+    def check_tile_collisions(self):
+        super().check_tile_collisions()
+        colided_tile = pygame.sprite.spritecollideany(self.top_side, tiles_group)
+        if colided_tile:
+            self.cur_jump = self.max_jumps
+            self.rect.y = colided_tile.rect.bottom
+            self.vy = max(0, self.vy)
+            self.update_sides()
 
 
 class CoinStatic(pygame.sprite.Sprite):
@@ -219,3 +225,67 @@ class Coin(CoinStatic):
 
     def check_player_collisions(self):
         pass
+
+
+class Fire(BaseCharacter):
+    IMAGES = cut_sheet(load_image("fire.png"), 4, 1)[0]
+    FLYING = [col for row in cut_sheet(IMAGES[0], 2, 2) for col in row]
+    EXPLODE = IMAGES[1:]
+
+    def __init__(self, x, y, direction):
+        self.cur_frame = 0
+        self.image = Fire.FLYING[self.cur_frame]
+        super().__init__(x, y, all_sprites, items_group)
+        self.vx = 5 * direction
+
+        self.explosion = False
+        self.explosion_time = 18
+
+    def update(self):
+        self.cur_frame = (self.cur_frame + 1) % 60
+
+        if self.explosion:
+            if self.cur_frame == self.explosion_time:
+                self.kill()
+            else:
+                self.image = Fire.EXPLODE[self.cur_frame // 6]
+            return
+
+        self.image = Fire.FLYING[self.cur_frame // 15 % 4]
+        self.update_coords()
+        self.rect.x += self.vx
+        self.check_tile_collisions()
+        self.check_enemies_collisions()
+
+        self.sides_group.draw(screen)
+
+    def check_tile_collisions(self):
+        self.update_sides()
+        for side in [self.left_side, self.right_side]:
+            colided_tile = pygame.sprite.spritecollideany(side, tiles_group)
+            if colided_tile:
+                self.vx = 0
+                self.explode()
+                break
+
+        colided_tile = pygame.sprite.spritecollideany(self.down_side, tiles_group)
+        if colided_tile:
+            self.rect.bottom = colided_tile.rect.y
+            self.vy = -self.max_vy
+            self.update_sides()
+
+        colided_tile = pygame.sprite.spritecollideany(self.top_side, tiles_group)
+        if colided_tile:
+            self.rect.y = colided_tile.rect.bottom
+            self.vy = self.max_vy
+            self.update_sides()
+
+    def check_enemies_collisions(self):
+        collided_enemy = pygame.sprite.spritecollideany(self, enemies_group)
+        if collided_enemy:
+            collided_enemy.die(1)
+            self.explode()
+
+    def explode(self):
+        self.explosion = True
+        self.cur_frame = 0

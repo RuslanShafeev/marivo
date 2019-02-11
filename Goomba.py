@@ -40,5 +40,5 @@ class Goomba(BaseCharacter):
     def die(self, rate):
         self.image = self.frames[2]
         self.smert = max(1, self.smert)
-        PointsUp(*self.rect.topleft, 100 * rate)
-        hud.add_score(100 * rate)
+        PointsUp(*self.rect.topleft, 200 * rate)
+        hud.add_score(200 * rate)

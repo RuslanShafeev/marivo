@@ -51,10 +51,13 @@ class Hud:
         self.h_indent = (WIDTH - self.first_line_width) // (len(self.first_line) + 1)
         self.v_indent = 10
         self.last_frame = FPS - 1
+        self.cur_frame = 0
 
-    def update(self, frame):
-        if frame == self.last_frame:
+    def update(self):
+        self.cur_frame = (self.cur_frame + 1) % 60
+        if self.cur_frame == self.last_frame:
             self.info['TIME'] -= 1
+
 
     def draw(self, screen):
         x = self.h_indent
