@@ -28,6 +28,7 @@ class Koopa(BaseCharacter):
         self.image = self.frames[self.cur_frame]
         super().__init__(x, y, all_sprites, enemies_group)
         self.vx = -2
+        self.value = 400
 
 
     def load_frames(self):
@@ -74,9 +75,14 @@ class Koopa(BaseCharacter):
             if not self.vx:
                self.vx = 10
             else:
-                PointsUp(*self.rect.topleft, 400 * rate)
-                hud.add_score(400 * rate)
+                PointsUp(*self.rect.topleft, self.value * rate)
+                hud.add_score(self.value * rate)
                 self.kill()
+
+    def fast_die(self):
+        PointsUp(*self.rect.topleft, self.value // 2)
+        hud.add_score(self.value // 2)
+        self.kill()
 
 
     def check_enemies_collisions(self):

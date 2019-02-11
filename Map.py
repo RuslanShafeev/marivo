@@ -52,7 +52,7 @@ goombas = {
 }
 Koopa(106 * PPM, 300, world)
 
-player = Player(150, 100, 'fire')
+player = Player(150, 100, world)
 # player = Player(9000, 100, world)
 
 CASTLE_X = 204

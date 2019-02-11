@@ -69,25 +69,25 @@ class Hud:
             x += self.h_indent + key_surf.get_width()
 
     def add_score(self, score):
-        self.info["SCORE"] += score
+        self.info["SCORE"] += int(score)
 
     def set_score(self, score):
-        self.info["SCORE"] = score
+        self.info["SCORE"] = int(score)
 
     def set_world(self, world):
-        self.info["WORLD"] = world
+        self.info["WORLD"] = str(world)
 
     def add_coins(self, coins):
-        self.info["COINS"] += coins
+        self.info["COINS"] += int(coins)
 
     def set_coins(self, coins):
-        self.info["COINS"] = coins
+        self.info["COINS"] = int(coins)
 
     def add_lives(self, lives):
-        self.info["LIVES"] += lives
+        self.info["LIVES"] += int(lives)
 
     def set_lives(self, lives):
-        self.info["LIVES"] = lives
+        self.info["LIVES"] = int(lives)
 
 
 class Camera:

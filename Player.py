@@ -135,12 +135,12 @@ class Player(BaseCharacter):
         self.update_sides()
         if self.killing:
             colided_enemies = pygame.sprite.spritecollide(self, enemies_group, False)
-            [enemy.die(len(colided_enemies) // 2) for enemy in colided_enemies]
+            [enemy.fast_die() for enemy in colided_enemies]
             return
         for side in [self.left_side, self.right_side]:
             colided_enemy = pygame.sprite.spritecollideany(side, enemies_group)
             if colided_enemy:
-                if self.set_state(self.world, 'small'):
+                if self.set_state('small', self.world):
                     self.become_invincible(120)
                 elif not self.invincibility:
                     self.die()
@@ -249,7 +249,9 @@ class Player(BaseCharacter):
         self.top_side.rect = pygame.Rect(self.rect.x + self.rect.w // 4, self.rect.y - 1,
                                          self.rect.w // 2, 1)
 
-    def set_state(self, new_type, new_state):
+    def set_state(self, new_state, new_type=None):
+        if not new_type:
+            new_type = self.type
         if self.state != new_state or self.type != new_type:
             self.type, self.state = new_type, new_state
             self.update_frames()
@@ -259,7 +261,7 @@ class Player(BaseCharacter):
 
     def die(self):
         self.vx = 0
-        self.set_state(self.world, 'small')
+        self.set_state('small', self.world)
         self.died = True
         self.cur_jump = 0
         self.jump()
