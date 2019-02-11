@@ -52,12 +52,19 @@ class Hud:
         self.v_indent = 10
         self.last_frame = FPS - 1
         self.cur_frame = 0
+        self.count = False
 
     def update(self):
-        self.cur_frame = (self.cur_frame + 1) % 60
-        if self.cur_frame == self.last_frame:
-            self.info['TIME'] -= 1
-
+        if self.count:
+            if self.info['TIME']:
+                self.info['TIME'] -= 1
+                self.info['SCORE'] += 50
+            else:
+                self.count = False
+        else:
+            self.cur_frame = (self.cur_frame + 1) % 60
+            if self.cur_frame == self.last_frame and self.info['TIME']:
+                self.info['TIME'] -= 1
 
     def draw(self, screen):
         x = self.h_indent
@@ -67,6 +74,9 @@ class Hud:
             screen.blit(val_surf, (x + (key_surf.get_width() - val_surf.get_width()) // 2,
                                    self.v_indent + key_surf.get_height()))
             x += self.h_indent + key_surf.get_width()
+
+    def start_count(self):
+        self.count = True
 
     def add_score(self, score):
         self.info["SCORE"] += int(score)

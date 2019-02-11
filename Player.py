@@ -72,6 +72,7 @@ class Player(BaseCharacter):
 
         if self.flagpoled == 0 and self.rect.y >= PPM * 10:
             self.flagpoled = 1
+            hud.start_count()
 
         if self.died:
             self.image = self.frames[5]
@@ -125,7 +126,8 @@ class Player(BaseCharacter):
         colided_tile = pygame.sprite.spritecollideany(self.top_side, tiles_group)
         if colided_tile:
             self.cur_jump = self.max_jumps
-            colided_tile.interact(self.state)
+            if self.vy < 0:
+                colided_tile.interact(self.state)
 
             self.rect.y = colided_tile.rect.bottom
             self.vy = max(0, self.vy)
@@ -246,7 +248,7 @@ class Player(BaseCharacter):
         self.top_side.image.fill((0, 255, 0))
 
     def update_top_side(self):
-        self.top_side.rect = pygame.Rect(self.rect.x + self.rect.w // 4, self.rect.y - 1,
+        self.top_side.rect = pygame.Rect(self.rect.x + self.rect.w // 4, self.rect.y,
                                          self.rect.w // 2, 1)
 
     def set_state(self, new_state, new_type=None):
