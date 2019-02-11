@@ -1,10 +1,10 @@
 import pygame
 from Utilities import *
-from BaseCharacter import BaseCharacter
+from BaseCharacter import *
 from PointsUp import PointsUp
 
 
-class Koopa(BaseCharacter):
+class Koopa(Character):
     IMAGES = {name: (surf1 + surf2) for name, surf1, surf2 in
               zip(['normal', 'underground', 'castle', 'underwater'],
                   cut_sheet(load_image("Koopa.png"), 4, 4),

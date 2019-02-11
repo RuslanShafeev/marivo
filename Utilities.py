@@ -117,6 +117,7 @@ SIZE = WIDTH, HEIGHT = 32 * PPM, 15 * PPM
 GRAVITY = 1
 screen = pygame.display.set_mode(SIZE)
 world = 'normal'
+scores = []
 
 camera = Camera()
 hud = Hud()

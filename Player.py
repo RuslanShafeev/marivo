@@ -2,13 +2,13 @@ import pygame
 from Utilities import *
 from Map import *
 from Goomba import Goomba
-from BaseCharacter import BaseCharacter
+from BaseCharacter import *
 from Castle import Castle
 from FlagPole import *
 from Items import Fire
 
 
-class Player(BaseCharacter):
+class Player(Character):
     def __init__(self, x, y, world):
         self.world = world
         self.type = self.world
@@ -63,7 +63,7 @@ class Player(BaseCharacter):
         self.update_invincibility()
         self.vx = max(min(self.vx, self.max_vx), -self.max_vx)
         if self.flagpoled == 1:
-            if self.rect.x >= Map.CastleA.get_centre():
+            if self.rect.x >= Map.map.castle.get_centre():
                 self.kill()
             self.rect.x += self.end_speed
             self.cur_jump = self.max_jumps

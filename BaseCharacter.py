@@ -81,3 +81,8 @@ class BaseCharacter(pygame.sprite.Sprite):
                                           self.rect.h - self.max_vy * 2)
         self.right_side.rect = pygame.Rect(self.rect.right, self.rect.y + self.max_vy, 1,
                                            self.rect.h - self.max_vy * 2)
+
+
+class Character(BaseCharacter):
+    def __init__(self, x, y, *groups):
+        super().__init__((x - 1) * PPM, y * PPM, *groups)

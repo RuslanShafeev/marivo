@@ -1,10 +1,10 @@
 import pygame
 from Utilities import *
 from PointsUp import PointsUp
-from BaseCharacter import BaseCharacter
+from BaseCharacter import *
 
 
-class Goomba(BaseCharacter):
+class Goomba(Character):
     IMAGES = {name: surf for name, surf in
               zip(['normal', 'underground', 'castle', 'underwater'],
                   cut_sheet(load_image("Goomba.png"), 3, 4))}
@@ -18,7 +18,7 @@ class Goomba(BaseCharacter):
         self.frames = Goomba.IMAGES[world]
         self.image = self.frames[self.cur_frame]
 
-        super().__init__((x - 1) * PPM, y * PPM, all_sprites, enemies_group)
+        super().__init__(x, y, all_sprites, enemies_group)
         self.vx = -1
 
     def update(self):
