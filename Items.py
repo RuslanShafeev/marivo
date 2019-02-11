@@ -48,7 +48,7 @@ class MushroomSizeUp(ItemBase):
     def check_player_collisions(self):
         collided = pygame.sprite.spritecollideany(self, players_group)
         if collided:
-            collided.set_state(world, 'big')
+            collided.set_state('big')
             print('+1000 Score')
             PointsUp(*collided.rect.topleft, 1000)
             hud.add_score(1000)
@@ -114,7 +114,7 @@ class FireFlower(ItemBase):
     def check_player_collisions(self):
         collided = pygame.sprite.spritecollideany(self, players_group)
         if collided:
-            collided.set_state('fire', 'big')
+            collided.set_state('big', 'fire')
             self.kill()
 
     def check_tile_collisions(self):
@@ -239,16 +239,17 @@ class Fire(BaseCharacter):
         self.vx = 5 * direction
 
         self.explosion = False
-        self.explosion_time = 18
+        self.explosion_time = 0
+        self.explosion_end = 17
 
     def update(self):
         self.cur_frame = (self.cur_frame + 1) % 60
 
         if self.explosion:
-            if self.cur_frame == self.explosion_time:
+            self.image = Fire.EXPLODE[self.explosion_time // 6]
+            self.explosion_time += 1
+            if self.explosion_time == self.explosion_end:
                 self.kill()
-            else:
-                self.image = Fire.EXPLODE[self.cur_frame // 6]
             return
 
         self.image = Fire.FLYING[self.cur_frame // 15 % 4]
@@ -265,8 +266,9 @@ class Fire(BaseCharacter):
             colided_tile = pygame.sprite.spritecollideany(side, tiles_group)
             if colided_tile:
                 self.vx = 0
-                self.explode()
-                break
+                self.explosion = True
+                self.update_sides()
+                return
 
         colided_tile = pygame.sprite.spritecollideany(self.down_side, tiles_group)
         if colided_tile:
@@ -283,9 +285,5 @@ class Fire(BaseCharacter):
     def check_enemies_collisions(self):
         collided_enemy = pygame.sprite.spritecollideany(self, enemies_group)
         if collided_enemy:
-            collided_enemy.die(1)
-            self.explode()
-
-    def explode(self):
-        self.explosion = True
-        self.cur_frame = 0
+            collided_enemy.fast_die()
+            self.explosion = True

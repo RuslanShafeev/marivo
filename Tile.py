@@ -46,6 +46,9 @@ class TilesBase(pygame.sprite.Sprite):
         Particle(self.rect.midleft, -5, 5, self.image)
         Particle(self.rect.center, 5, 5, self.image)
 
+    def kill_enemies(self):
+        [enemy.fast_die() for enemy in pygame.sprite.spritecollide(self, enemies_group, False)]
+
 
 class Floor(TilesBase):
     def __init__(self, x, y, world):
@@ -59,6 +62,7 @@ class BrickPlain(TilesBase):
         super().__init__(x, y)
 
     def interact(self, mario_state):
+        self.kill_enemies()
         self.create_particles()
         self.kill()
 
@@ -95,6 +99,7 @@ class Brick(TilesBase):
 
     def interact(self, mario_state):
         if self.rect.y == self.start_y and self.image is not self.stone_image:
+            self.kill_enemies()
             if self.items:
                 item_obj = TilesBase.ITEMS[self.items.pop()]
                 if item_obj is FireFlower and mario_state == 'small':
@@ -142,6 +147,7 @@ class Quest(TilesBase):
             self.move()
 
     def interact(self, mario_state):
+        self.kill_enemies()
         if self.item:
             item_obj = TilesBase.ITEMS[self.item]
             if item_obj is FireFlower and mario_state == 'small':

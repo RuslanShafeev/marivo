@@ -42,3 +42,6 @@ class Goomba(Character):
         self.smert = max(1, self.smert)
         PointsUp(*self.rect.topleft, 200 * rate)
         hud.add_score(200 * rate)
+
+    def fast_die(self):
+        self.die(0.5)

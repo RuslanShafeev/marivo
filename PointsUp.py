@@ -9,7 +9,7 @@ class PointsUp(pygame.sprite.Sprite):
 
     def __init__(self, x, y, points):
         super().__init__(all_sprites, particles_group)
-        self.image = PointsUp.FONT.render(str(points), 1, pygame.Color('white'))
+        self.image = PointsUp.FONT.render(str(int(points)), 1, pygame.Color('white'))
         self.rect = self.image.get_rect()
         self.rect = self.rect.move(x, y)
         self.timer = 0
