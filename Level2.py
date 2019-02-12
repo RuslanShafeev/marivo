@@ -55,6 +55,17 @@ def init():
     jkoopas = {
         12: [15, 66, 114]
     }
+    grass_hills = {
+        12: [(1, 2), (16, 1), (48, 2), (64, 1), (100, 2),
+             (112, 1), (144, 2), (160, 1)]
+    }
+    grass = {
+        12: [11, 13, 23, 41, 60, 71, 108, 120, 137, 158, 168]
+    }
+    clouds = {
+        1: [12, 31, 56, 78, 92, 94, 100, 138],
+        2: [4, 23, 42, 63, 84, 106, 121, 135, 142, 157]
+    }
 
     tiles = [(Brick, bricks), (CastleBlock, stones)]
     enemies = [(Goomba, goombas), (Koopa, koopas), (JumpingKoopa, jkoopas)]
@@ -72,6 +83,7 @@ def init():
     map.add_tubes(tubes)
     for enemy_class, enemies_arr in enemies:
         map.add_enemies(enemy_class, enemies_arr)
+    map.add_decor(grass_hills=grass_hills, grass=grass, clouds=clouds)
 
     player = Player(3.5, 11, 'fire')
 

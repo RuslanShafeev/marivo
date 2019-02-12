@@ -132,6 +132,7 @@ camera = Camera()
 hud = Hud()
 
 all_sprites = pygame.sprite.Group()
+decor_group = pygame.sprite.Group()
 players_group = pygame.sprite.Group()
 enemies_group = pygame.sprite.Group()
 tiles_group = pygame.sprite.Group()

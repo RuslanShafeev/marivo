@@ -18,6 +18,7 @@ while True:
     all_sprites.update()
     hud.update()
 
+    decor_group.draw(screen)
     items_group.draw(screen)
     enemies_group.draw(screen)
     castle_group.draw(screen)

@@ -172,3 +172,32 @@ class Stone(TilesBase):
     def __init__(self, x, y, world):
         self.image = TilesBase.IMAGES[world][9]
         super().__init__(x, y)
+
+
+class Decor(pygame.sprite.Sprite):
+    def __init__(self, x, y, image):
+        super().__init__(all_sprites, decor_group)
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect = self.rect.move((x - 1) * PPM, y * PPM)
+
+
+class GrassHill(Decor):
+    image = load_image("grass_hill.png")
+
+    def __init__(self, x, y, height):
+        super().__init__(x, y - height + 1, GrassHill.image)
+
+
+class Grass(Decor):
+    image = load_image("grass.png")
+
+    def __init__(self, x, y):
+        super().__init__(x, y, Grass.image)
+
+
+class Cloud(Decor):
+    image = load_image("cloud.png")
+
+    def __init__(self, x, y):
+        super().__init__(x, y, Cloud.image)

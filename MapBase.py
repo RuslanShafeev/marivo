@@ -69,3 +69,14 @@ class MapBase:
         for y in tubes:
             for x, pow in tubes[y]:
                 Tube(x, y, pow)
+
+    def add_decor(self, grass_hills=[], grass=[], clouds=[]):
+        for y in grass_hills:
+            for x, h in grass_hills[y]:
+                GrassHill(x, y, h)
+        for y in grass:
+            for x in grass[y]:
+                Grass(x, y)
+        for y in clouds:
+            for x in clouds[y]:
+                Cloud(x, y)
