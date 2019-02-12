@@ -1,6 +1,5 @@
 import pygame
 from Utilities import *
-import Map
 from PointsUp import PointsUp
 
 

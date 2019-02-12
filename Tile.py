@@ -31,7 +31,6 @@ class TilesBase(pygame.sprite.Sprite):
     IMAGES = {name: surf for name, surf in
               zip(['normal', 'underground', 'castle', 'underwater'],
                   cut_sheet(load_image("Tile.png"), 10, 4))}
-
     def __init__(self, x, y):
         super().__init__(all_sprites, tiles_group)
         self.rect = self.image.get_rect()

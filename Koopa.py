@@ -2,6 +2,7 @@ import pygame
 from Utilities import *
 from BaseCharacter import *
 from PointsUp import PointsUp
+import Map
 
 
 class Koopa(Character):
@@ -32,8 +33,8 @@ class Koopa(Character):
 
 
     def load_frames(self):
-        self.l_frames = Koopa.L_KOOPA[world]
-        self.r_frames = Koopa.R_KOOPA[world]
+        self.l_frames = Koopa.L_KOOPA[Map.world]
+        self.r_frames = Koopa.R_KOOPA[Map.world]
         self.frames = self.l_frames
 
 
@@ -108,8 +109,8 @@ class JumpingKoopa(Koopa):
         self.max_vy = 5
 
     def load_frames(self):
-        self.l_frames = JumpingKoopa.L_FLYING_KOOPA[world]
-        self.r_frames = JumpingKoopa.R_FLYING_KOOPA[world]
+        self.l_frames = JumpingKoopa.L_FLYING_KOOPA[Map.world]
+        self.r_frames = JumpingKoopa.R_FLYING_KOOPA[Map.world]
         self.frames = self.l_frames
 
     def update(self):

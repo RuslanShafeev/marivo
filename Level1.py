@@ -20,9 +20,10 @@ def init():
     quests = {
         5: [23, 94, 109, 129, 130],
         8: [64],
-        9: [17, 22, 24, 78, 94, 101, 106, 109, 112, 170]
+        9: [17, 22, 24, 78, 101, 106, 109, 112, 170]
     }
-    sizeup = [(22, 9), (78, 9), (109, 5)]
+    flower = [(109, 5)]
+    sizeup = [(22, 9), (78, 9)]
     liveup = [(64, 8)]
     star = [(101, 9)]
 
@@ -75,12 +76,13 @@ def init():
     map.add_flagpole(*flagpole)
     for tile_class, tiles_arr in tiles:
         map.add_tiles(tile_class, tiles_arr)
-    map.add_quests(quests, sizeup=sizeup, liveup=liveup, star=star)
+    Brick(94, 9, Map.world, "Coin")
+    map.add_quests(quests, sizeup=sizeup, liveup=liveup, star=star, flower=flower)
     map.add_tubes(tubes)
     for enemy_class, enemies_arr in enemies:
         map.add_enemies(enemy_class, enemies_arr)
     map.add_decor(grass_hills=grass_hills, grass=grass, clouds=clouds)
 
-    player = Player(3.5, 11, 'fire')
+    player = Player(3.5, 11, Map.player_state, Map.player_type)
 
     return map, player

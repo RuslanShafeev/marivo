@@ -1,16 +1,15 @@
 import pygame
 from Utilities import *
-from Map import *
-
+import Map
 
 time = pygame.time.Clock()
 cur_frame = 0
 
 while True:
-    player.process_events(pygame.event.get())
+    Map.player.process_events(pygame.event.get())
     screen.fill((92, 148, 252))
 
-    camera.update(player)
+    camera.update(Map.player)
     for sprite in all_sprites:
         camera.apply(sprite)
 

@@ -1,5 +1,4 @@
 import pygame
-from Map import *
 from Utilities import *
 
 

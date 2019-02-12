@@ -1,18 +1,18 @@
 import pygame
 from Utilities import *
-from Map import *
 from Goomba import Goomba
 from BaseCharacter import *
 from Castle import Castle
 from FlagPole import *
 from Items import Fire
+import Map
 
 
 class Player(Character):
-    def __init__(self, x, y, world):
+    def __init__(self, x, y, state, world):
         self.world = world
         self.type = self.world
-        self.state = 'big'
+        self.state = state
         self.MARIO_IMAGES = self.load_images()
         self.alpha_surface = pygame.Surface((1, 1), pygame.SRCALPHA)
         self.load_frames()
@@ -220,7 +220,6 @@ class Player(Character):
                 elif event.key == pygame.K_x and self.type == 'fire':
                     Fire(*self.rect.center, 1 if self.frames is self.r_frames else -1)
 
-
         if self.died or self.flagpoled >= 0:
             return
 
@@ -260,6 +259,8 @@ class Player(Character):
             new_type = self.type
         if self.state != new_state or self.type != new_type:
             self.type, self.state = new_type, new_state
+            Map.player_state = self.state
+            Map.player_type = self.type
             self.update_frames()
             self.blinking = 120
             self.blinking_freq = 30

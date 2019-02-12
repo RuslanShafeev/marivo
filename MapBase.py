@@ -5,6 +5,7 @@ from Tube import Tube
 from Koopa import *
 from Castle import Castle
 from FlagPole import *
+import Map
 
 
 class MapBase:
@@ -36,7 +37,7 @@ class MapBase:
             for x in jkoopas[y]:
                 JumpingKoopa(x, y, self.world_type)
 
-    def add_quests(self, quests, sizeup=[], liveup=[], star=[]):
+    def add_quests(self, quests, sizeup=[], liveup=[], star=[], flower=[]):
         for y in quests:
             for x in quests[y]:
                 quest = 'Coin'
@@ -46,7 +47,9 @@ class MapBase:
                     quest = 'MushroomLiveUp'
                 elif (x, y) in star:
                     quest = 'Star'
-                Quest(x, y, world, quest)
+                elif (x, y) in flower:
+                    quest = 'FireFlower'
+                Quest(x, y, Map.world, quest)
 
     def add_tiles(self, tile_class, tiles):
         for y in tiles:

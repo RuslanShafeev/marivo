@@ -30,9 +30,10 @@ def init():
         8: [64],
         9: [26, 107, 109, 144]
     }
-    sizeup = [(17, 4), (109, 4)]
+    sizeup = [(17, 4), (100, 5)]
     liveup = [(33, 5)]
     star = [(64, 3)]
+    flower = [(109, 4)]
 
     stones = {
         9: [93, 100],
@@ -57,10 +58,10 @@ def init():
     }
     grass_hills = {
         12: [(1, 2), (16, 1), (48, 2), (64, 1), (100, 2),
-             (112, 1), (144, 2), (160, 1)]
+             (112, 1), (144, 2)]
     }
     grass = {
-        12: [11, 13, 23, 41, 60, 71, 108, 120, 137, 158, 168]
+        12: [11, 13, 23, 41, 60, 71, 108, 120, 137]
     }
     clouds = {
         1: [12, 31, 56, 78, 92, 94, 100, 138],
@@ -79,12 +80,12 @@ def init():
     map.add_flagpole(*flagpole)
     for tile_class, tiles_arr in tiles:
         map.add_tiles(tile_class, tiles_arr)
-    map.add_quests(quests, sizeup=sizeup, liveup=liveup, star=star)
+    map.add_quests(quests, sizeup=sizeup, liveup=liveup, star=star, flower=flower)
     map.add_tubes(tubes)
     for enemy_class, enemies_arr in enemies:
         map.add_enemies(enemy_class, enemies_arr)
     map.add_decor(grass_hills=grass_hills, grass=grass, clouds=clouds)
 
-    player = Player(3.5, 11, 'fire')
+    player = Player(3.5, 11, Map.player_state, Map.player_type)
 
     return map, player

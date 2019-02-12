@@ -1,7 +1,6 @@
 import pygame
 from Utilities import *
 from BaseCharacter import BaseCharacter
-import Map
 from PointsUp import PointsUp
 
 
@@ -37,7 +36,7 @@ class ItemBase(BaseCharacter):
         self.sides_group.draw(screen)
 
     def show_points(self, collided, points):
-        Map.scores.append(PointsUp(collided.rect.left, collided.rect.top, points, Map.scores))
+        scores.append(PointsUp(collided.rect.left, collided.rect.top, points, scores))
 
 
 class MushroomSizeUp(ItemBase):
