@@ -30,7 +30,8 @@ class TilesBase(pygame.sprite.Sprite):
              'MushroomDeadly': MushroomDeadly, 'FireFlower': FireFlower, 'Star': Star, 'Coin': Coin}
     IMAGES = {name: surf for name, surf in
               zip(['normal', 'underground', 'castle', 'underwater'],
-                  cut_sheet(load_image("Tile.png"), 10, 4))}
+                  cut_sheet(load_image("Tile.png"), 11, 4))}
+
     def __init__(self, x, y):
         super().__init__(all_sprites, tiles_group)
         self.rect = self.image.get_rect()
@@ -126,6 +127,26 @@ class Brick(TilesBase):
             self.rect.y += 3
 
 
+class InvincibleTile(TilesBase):
+    def __init__(self, x, y, world, item):
+        self.x, self.y = x, y
+        self.world = world
+        self.item = item
+        self.used = False
+        self.image = TilesBase.IMAGES[world][10]
+        super().__init__(x, y)
+
+    def interact(self, mario_state):
+        if self.used:
+            return
+        item_obj = TilesBase.ITEMS[self.item]
+        if item_obj is FireFlower and mario_state == 'small':
+            item_obj = MushroomSizeUp
+        item_obj(self.rect.x, self.rect.y - 14, self.world)
+        self.image = TilesBase.IMAGES[self.world][9]
+        self.used = True
+
+
 class Quest(TilesBase):
     def __init__(self, x, y, world, item):
         self.world = world
@@ -165,7 +186,6 @@ class Quest(TilesBase):
             self.rect.y += 3
             if self.rect.y == self.start_y:
                 self.image = self.frames[3]
-
 
 class Stone(TilesBase):
     def __init__(self, x, y, world):

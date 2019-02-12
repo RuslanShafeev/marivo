@@ -31,12 +31,10 @@ class Koopa(Character):
         self.vx = -2
         self.value = 400
 
-
     def load_frames(self):
         self.l_frames = Koopa.L_KOOPA[Map.world]
         self.r_frames = Koopa.R_KOOPA[Map.world]
         self.frames = self.l_frames
-
 
     def load_image(self, index):
         topleft = self.rect.topleft
@@ -44,7 +42,6 @@ class Koopa(Character):
         self.rect = self.image.get_rect()
         self.rect.topleft = topleft
         self.update_sides()
-
 
     def update(self):
         self.update_coords()
@@ -66,7 +63,6 @@ class Koopa(Character):
             self.cur_frame = (self.cur_frame + 1) % 60
             self.image = self.frames[self.cur_frame // 15 % 2]
 
-
     def die(self, rate):
         if not self.smert:
             self.load_image(2)
@@ -74,7 +70,8 @@ class Koopa(Character):
             self.vx = 0
         else:
             if not self.vx:
-               self.vx = 10
+                right = (self.rect.x + self.rect.w // 2) > (Map.player.rect.x + Map.player.rect.w // 2)
+                self.vx = 10 if right else (-10)
             else:
                 PointsUp(*self.rect.topleft, self.value * rate)
                 hud.add_score(self.value * rate)

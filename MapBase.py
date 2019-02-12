@@ -9,6 +9,8 @@ import Map
 
 
 class MapBase:
+    RIGHT_ADD = 12
+
     def __init__(self, world_type, width, height):
         self.world_type = world_type
         self.width = width
@@ -62,7 +64,7 @@ class MapBase:
                 enemy_class(x, y, self.world_type)
 
     def add_floor(self, empty):
-        for i in range(1, self.width + 1):
+        for i in range(1, self.width + MapBase.RIGHT_ADD + 1):
             if i in empty:
                 continue
             Floor(i, 13, self.world_type)

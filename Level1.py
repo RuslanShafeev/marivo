@@ -19,7 +19,6 @@ def init():
 
     quests = {
         5: [23, 94, 109, 129, 130],
-        8: [64],
         9: [17, 22, 24, 78, 101, 106, 109, 112, 170]
     }
     flower = [(109, 5)]
@@ -54,14 +53,14 @@ def init():
     }
     grass_hills = {
         12: [(1, 2), (16, 1), (48, 2), (64, 1), (96, 2),
-             (112, 1), (144, 2), (160, 1), (192, 2), (208, 1)]
+             (112, 1), (144, 2), (160, 1), (192, 2), (208, 1), (212, 2)]
     }
     grass = {
         12: [11, 13, 23, 41, 60, 71, 90, 108, 120, 137, 158, 168, 206]
     }
     clouds = {
         1: [12, 31, 56, 78, 92, 94, 100, 138, 160, 172, 202, 209],
-        2: [4, 23, 42, 63, 84, 106, 121, 135, 142, 157, 205]
+        2: [4, 23, 42, 63, 84, 106, 121, 135, 142, 157, 213]
     }
 
     tiles = [(Brick, bricks), (CastleBlock, stones)]
@@ -76,6 +75,7 @@ def init():
     map.add_flagpole(*flagpole)
     for tile_class, tiles_arr in tiles:
         map.add_tiles(tile_class, tiles_arr)
+    InvincibleTile(64, 8, world, "MushroomLiveUp")
     Brick(94, 9, Map.world, "Coin")
     map.add_quests(quests, sizeup=sizeup, liveup=liveup, star=star, flower=flower)
     map.add_tubes(tubes)
