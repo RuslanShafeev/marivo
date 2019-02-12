@@ -1,5 +1,5 @@
 import Level1, Level2
 
 world = 'normal'
-level = Level2
+level = Level1
 map, player = level.init()

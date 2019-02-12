@@ -164,10 +164,14 @@ class Player(Character):
         if self.flagpoled > -1:
             return
         colided_flagpole = pygame.sprite.spritecollideany(self.right_side, castle_group)
-        if colided_flagpole:
+        if colided_flagpole and self.rect.x + self.rect.w > colided_flagpole.rect.x + PPM // 4:
             if isinstance(colided_flagpole, FlagPole):
                 self.flagpoled = 0
                 self.vx = 0
+                points = 5000 if self.rect.y < 2 * PPM else 400
+                points_coords = (self.rect.x + 2 * PPM, self.rect.y + 1.5 * PPM)
+                PointsUp(*points_coords, points)
+                hud.add_score(points)
                 self.rect.x = colided_flagpole.rect.x - PPM // 2
 
     def jump(self):
