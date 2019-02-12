@@ -2,7 +2,6 @@ import pygame
 from Utilities import *
 from BaseCharacter import *
 from PointsUp import PointsUp
-import Map
 
 
 class Koopa(Character):
@@ -18,6 +17,7 @@ class Koopa(Character):
                for key, images in L_KOOPA.items()}
 
     def __init__(self, x, y, world):
+        self.world = world
         self.smert = 0
 
         self.REVIVAL_TIME = 60 * 6
@@ -32,8 +32,8 @@ class Koopa(Character):
         self.value = 400
 
     def load_frames(self):
-        self.l_frames = Koopa.L_KOOPA[Map.world]
-        self.r_frames = Koopa.R_KOOPA[Map.world]
+        self.l_frames = Koopa.L_KOOPA[self.world]
+        self.r_frames = Koopa.R_KOOPA[self.world]
         self.frames = self.l_frames
 
     def load_image(self, index):
@@ -70,8 +70,7 @@ class Koopa(Character):
             self.vx = 0
         else:
             if not self.vx:
-                right = (self.rect.x + self.rect.w // 2) > (Map.player.rect.x + Map.player.rect.w // 2)
-                self.vx = 10 if right else (-10)
+                self.vx = 10
             else:
                 PointsUp(*self.rect.topleft, self.value * rate)
                 hud.add_score(self.value * rate)
@@ -97,7 +96,6 @@ class JumpingKoopa(Koopa):
                       for key, images in L_FLYING_KOOPA.items()}
 
     def __init__(self, x, y, world):
-        self.world = world
         super().__init__(x, y, world)
         self.cur_jump = 0
         self.max_jumps = 25
@@ -106,8 +104,8 @@ class JumpingKoopa(Koopa):
         self.max_vy = 5
 
     def load_frames(self):
-        self.l_frames = JumpingKoopa.L_FLYING_KOOPA[Map.world]
-        self.r_frames = JumpingKoopa.R_FLYING_KOOPA[Map.world]
+        self.l_frames = JumpingKoopa.L_FLYING_KOOPA[self.world]
+        self.r_frames = JumpingKoopa.R_FLYING_KOOPA[self.world]
         self.frames = self.l_frames
 
     def update(self):

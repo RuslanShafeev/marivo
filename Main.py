@@ -1,30 +1,31 @@
 import pygame
 from Utilities import *
 import Map
+import Level1, Level2
 
 time = pygame.time.Clock()
 cur_frame = 0
+level = Level1
+map, player, all_sprites, groups = level.init()
 
 while True:
-    Map.player.process_events(pygame.event.get())
+    player.process_events(pygame.event.get())
     screen.fill((92, 148, 252))
 
-    camera.update(Map.player)
+    camera.update(player)
     for sprite in all_sprites:
         camera.apply(sprite)
 
-    players_group.update()
-    all_sprites.update()
-    hud.update()
+    for group in groups:
+        group.update()
+        group.draw(screen)
 
-    decor_group.draw(screen)
-    items_group.draw(screen)
-    enemies_group.draw(screen)
-    castle_group.draw(screen)
-    tiles_group.draw(screen)
-    players_group.draw(screen)
-    particles_group.draw(screen)
+    hud.update()
     hud.draw(screen)
+
+    if player.rect.y > HEIGHT and hud.get_lives():
+        map, player, all_sprites, groups = level.init()
+        hud.reset()
 
     pygame.display.flip()
     time.tick(FPS)

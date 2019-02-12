@@ -51,7 +51,7 @@ class MapBase:
                     quest = 'Star'
                 elif (x, y) in flower:
                     quest = 'FireFlower'
-                Quest(x, y, Map.world, quest)
+                Quest(x, y, self.world_type, quest)
 
     def add_tiles(self, tile_class, tiles):
         for y in tiles:

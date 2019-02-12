@@ -99,6 +99,14 @@ class Hud:
     def set_lives(self, lives):
         self.info["LIVES"] = int(lives)
 
+    def get_lives(self):
+        return self.info["LIVES"]
+
+    def reset(self):
+        self.info = OrderedDict([("SCORE", 0), ("TIME", 400), ("WORLD", self.info['WORLD']),
+                                 ("COINS", 0), ("LIVES", self.info['LIVES'])])
+
+
 
 class Camera:
     # зададим начальный сдвиг камеры
@@ -130,7 +138,6 @@ scores = []
 
 camera = Camera()
 hud = Hud()
-
 all_sprites = pygame.sprite.Group()
 decor_group = pygame.sprite.Group()
 players_group = pygame.sprite.Group()

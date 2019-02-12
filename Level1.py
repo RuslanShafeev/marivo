@@ -9,7 +9,14 @@ from MapBase import MapBase
 
 
 def init():
+    all_sprites.empty()
+    groups = [decor_group, items_group, enemies_group, castle_group, tiles_group, players_group,
+              particles_group]
+    [group.empty() for group in groups]
+
     world = 'normal'
+    player_type = 'normal'
+    player_state = 'small'
 
     empty = [69, 70, 86, 88, 153, 154]
     bricks = {
@@ -76,13 +83,13 @@ def init():
     for tile_class, tiles_arr in tiles:
         map.add_tiles(tile_class, tiles_arr)
     InvincibleTile(64, 8, world, "MushroomLiveUp")
-    Brick(94, 9, Map.world, "Coin")
+    Brick(94, 9, world, "Coin")
     map.add_quests(quests, sizeup=sizeup, liveup=liveup, star=star, flower=flower)
     map.add_tubes(tubes)
     for enemy_class, enemies_arr in enemies:
         map.add_enemies(enemy_class, enemies_arr)
     map.add_decor(grass_hills=grass_hills, grass=grass, clouds=clouds)
 
-    player = Player(3.5, 11, Map.player_state, Map.player_type)
+    player = Player(3.5, 11, player_state, player_type)
 
-    return map, player
+    return map, player, all_sprites, groups
