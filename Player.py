@@ -274,7 +274,7 @@ class Player(Character):
         self.cur_jump = 0
         self.jump()
         hud.add_lives(-1)
-        Map.load_level((Map.lvl1 if Map.cur == Map.lvl1 else Map.lvl2), Utilities)
+        Map.load_level(Map.cur, Utilities)
 
     def become_invincible(self, time, killing=False):
         self.killing = killing
