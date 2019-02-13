@@ -13,7 +13,7 @@ cur = lvl1
 def load_level(lvl, utils=None, resetscore=False):
     global cur, map, player
     if utils is not None:
-        utils.hud.reset(resetscore)
+        utils.hud.reset(resetscore, world=('1-1' if lvl == lvl1 else '1-2'))
         if resetscore:
             global player_state, player_type, world
             player_state, player_type, world = 'small', 'normal', 'normal'

@@ -18,7 +18,11 @@ while True:
         continue
 
     if Map.player.flagpoled and not hud.get_time():
-        Map.load_level(Map.lvl2, utils=Utilities)
+        if Map.cur == Map.lvl1:
+            Map.load_level(Map.lvl2, utils=Utilities)
+        else:
+            hud.game_over = 600
+            hud.game_over_draw(screen)
 
     Map.player.process_events(pygame.event.get())
     screen.fill((92, 148, 252))
@@ -29,7 +33,6 @@ while True:
 
     players_group.update()
     all_sprites.update()
-
 
     decor_group.draw(screen)
     items_group.draw(screen)

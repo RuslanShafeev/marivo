@@ -125,12 +125,13 @@ class Hud:
     def set_time(self, time):
         self.info['TIME'] = time
 
-    def reset(self, score=False):
+    def reset(self, score=False, world='1-1'):
         if score:
-            self.info = OrderedDict([("SCORE", 0), ("TIME", 400), ("WORLD", "1-1"), ("COINS", 0),
-                                     ("LIVES", self.info["LIVES"])])
-        else:
-            self.info["TIME"] = 400
+            self.info['SCORE'] = 0
+            self.info['WORLD'] = world
+            self.info['COINS'] = 0
+        self.info['TIME'] = 400
+        print("reset")
 
     def game_over_draw(self, screen):
         screen.fill((0, 0, 0))
