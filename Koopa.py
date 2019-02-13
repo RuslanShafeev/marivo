@@ -70,7 +70,8 @@ class Koopa(Character):
             self.vx = 0
         else:
             if not self.vx:
-                right = (self.rect.x + self.rect.w // 2) > (Map.player.rect.x + Map.player.rect.w // 2)
+                right = (self.rect.x + self.rect.w // 2) > (
+                        Map.player.rect.x + Map.player.rect.w // 2)
                 self.vx = 10 if right else (-10)
             else:
                 PointsUp(*self.rect.topleft, self.value * rate)
@@ -82,11 +83,10 @@ class Koopa(Character):
         hud.add_score(self.value // 2)
         self.kill()
 
-
     def check_enemies_collisions(self):
         if self.smert and self.vx:
             [enemy.die(2) if enemy is not self else None for enemy in
-            pygame.sprite.spritecollide(self, enemies_group, False)]
+             pygame.sprite.spritecollide(self, enemies_group, False)]
         else:
             super().check_enemies_collisions()
 

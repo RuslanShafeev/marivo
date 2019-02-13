@@ -47,7 +47,8 @@ class TilesBase(pygame.sprite.Sprite):
         Particle(self.rect.center, 5, 5, self.image)
 
     def kill_enemies(self):
-        [enemy.fast_die() for enemy in pygame.sprite.spritecollide(self, enemies_group, False, self.check_enemy_collide)]
+        [enemy.fast_die() for enemy in
+         pygame.sprite.spritecollide(self, enemies_group, False, self.check_enemy_collide)]
 
     def check_enemy_collide(self, tile, enemy):
         return pygame.sprite.collide_rect(tile, enemy.down_side)
@@ -189,6 +190,7 @@ class Quest(TilesBase):
             self.rect.y += 3
             if self.rect.y == self.start_y:
                 self.image = self.frames[3]
+
 
 class Stone(TilesBase):
     def __init__(self, x, y, world):

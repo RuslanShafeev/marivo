@@ -19,7 +19,6 @@ class Castle(pygame.sprite.Sprite):
         else:
             y -= Castle.BIG_HEIGHT
         self.rect.x, self.rect.y = (x - x_off - 1) * PPM, y * PPM
-        print(self.rect)
 
     def get_centre(self):
         return self.rect.x + 4 * PPM

@@ -48,7 +48,6 @@ class MushroomSizeUp(ItemBase):
         collided = pygame.sprite.spritecollideany(self, players_group)
         if collided:
             collided.set_state('big')
-            print('+1000 Score')
             PointsUp(*collided.rect.topleft, 1000)
             hud.add_score(1000)
             self.kill()
@@ -68,7 +67,6 @@ class MushroomLiveUp(ItemBase):
     def check_player_collisions(self):
         collided = pygame.sprite.spritecollideany(self, players_group)
         if collided:
-            print('+1 live')
             hud.add_lives(1)
             self.kill()
 
@@ -192,8 +190,6 @@ class CoinStatic(pygame.sprite.Sprite):
     def check_player_collisions(self):
         collided = pygame.sprite.spritecollideany(self, players_group)
         if collided:
-            print('+1 coins')
-            print('+200 score')
             hud.add_score(200)
             hud.add_coins(1)
             self.kill()
@@ -206,8 +202,6 @@ class Coin(CoinStatic):
         self.start_y = self.rect.y - self.rect.h
         self.end_y = self.start_y - self.rect.h * 2
 
-        print('+1 coins')
-        print('+200 score')
         hud.add_score(200)
         hud.add_coins(1)
 

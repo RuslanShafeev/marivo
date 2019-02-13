@@ -55,6 +55,7 @@ class Hud:
         self.count = False
         self.game_over = 0
         self.load_level_request = False
+        self.game_over_time = 240
 
     def update(self):
         if self.game_over:
@@ -75,8 +76,7 @@ class Hud:
             if self.cur_frame == self.last_frame and self.info['TIME']:
                 self.info['TIME'] -= 1
                 if not self.info['TIME']:
-                    self.game_over = 600
-
+                    self.start_game_over()
 
     def draw(self, screen):
         if self.game_over:
@@ -111,7 +111,7 @@ class Hud:
     def add_lives(self, lives):
         self.info["LIVES"] += int(lives)
         if self.info["LIVES"] < 0:
-            self.game_over = 600
+            self.start_game_over()
 
     def set_lives(self, lives):
         self.info["LIVES"] = int(lives)
@@ -125,13 +125,11 @@ class Hud:
     def set_time(self, time):
         self.info['TIME'] = time
 
-    def reset(self, score=False, world='1-1'):
+    def reset(self, score=False):
         if score:
             self.info['SCORE'] = 0
-            self.info['WORLD'] = world
             self.info['COINS'] = 0
         self.info['TIME'] = 400
-        print("reset")
 
     def game_over_draw(self, screen):
         screen.fill((0, 0, 0))
@@ -145,6 +143,8 @@ class Hud:
     def get_load_level_request(self):
         return self.load_level_request
 
+    def start_game_over(self):
+        self.game_over = self.game_over_time
 
 
 class Camera:
@@ -177,6 +177,7 @@ scores = []
 
 camera = Camera()
 hud = Hud()
+
 all_sprites = pygame.sprite.Group()
 decor_group = pygame.sprite.Group()
 players_group = pygame.sprite.Group()
@@ -185,3 +186,6 @@ tiles_group = pygame.sprite.Group()
 castle_group = pygame.sprite.Group()
 items_group = pygame.sprite.Group()
 particles_group = pygame.sprite.Group()
+
+groups = [decor_group, items_group, enemies_group, castle_group, tiles_group, players_group,
+          particles_group]

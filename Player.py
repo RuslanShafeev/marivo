@@ -267,8 +267,9 @@ class Player(Character):
             Map.player_state = self.state
             Map.player_type = self.type
             self.update_frames()
-            self.blinking = 120
-            self.blinking_freq = 30
+            if not self.blinking:
+                self.blinking = 120
+                self.blinking_freq = 30
             return True
 
     def die(self):
@@ -279,7 +280,6 @@ class Player(Character):
         self.jump()
         hud.add_lives(-1)
 
-
     def become_invincible(self, time, killing=False):
         self.killing = killing
         self.invincibility = time
@@ -289,3 +289,6 @@ class Player(Character):
 
     def die(self):
         self.died = True
+
+    def get_flagpoled(self):
+        return self.flagpoled == 1

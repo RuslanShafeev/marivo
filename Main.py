@@ -10,18 +10,18 @@ while True:
     hud.draw(screen)
 
     if hud.get_load_level_request():
-        Map.load_level(Map.lvl1, utils=Utilities, resetscore=True)
+        Map.load_level(Map.lvl1, Utilities, resetscore=True)
         hud.set_lives(3)
     elif hud.get_game_over():
         time.tick(FPS)
         pygame.display.flip()
         continue
 
-    if Map.player.flagpoled and not hud.get_time():
+    if Map.player.get_flagpoled() and not hud.get_time():
         if Map.cur == Map.lvl1:
-            Map.load_level(Map.lvl2, utils=Utilities)
+            Map.load_level(Map.lvl2, Utilities)
         else:
-            hud.game_over = 600
+            hud.start_game_over()
             hud.game_over_draw(screen)
 
     Map.player.process_events(pygame.event.get())
@@ -34,13 +34,7 @@ while True:
     players_group.update()
     all_sprites.update()
 
-    decor_group.draw(screen)
-    items_group.draw(screen)
-    enemies_group.draw(screen)
-    castle_group.draw(screen)
-    tiles_group.draw(screen)
-    players_group.draw(screen)
-    particles_group.draw(screen)
+    [group.draw(screen) for group in groups]
     hud.draw(screen)
 
     time.tick(FPS)

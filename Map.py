@@ -10,23 +10,17 @@ lvl2 = Level2
 cur = lvl1
 
 
-def load_level(lvl, utils=None, resetscore=False):
+def load_level(lvl, utils, resetscore=False):
     global cur, map, player
-    if utils is not None:
-        utils.hud.reset(resetscore, world=('1-1' if lvl == lvl1 else '1-2'))
-        if resetscore:
-            global player_state, player_type, world
-            player_state, player_type, world = 'small', 'normal', 'normal'
-        utils.all_sprites.empty()
-        utils.decor_group.empty()
-        utils.players_group.empty()
-        utils.enemies_group.empty()
-        utils.tiles_group.empty()
-        utils.castle_group.empty()
-        utils.items_group.empty()
-        utils.particles_group.empty()
+    utils.hud.reset(resetscore)
+    if resetscore:
+        global player_state, player_type, world
+        player_state, player_type, world = 'small', 'normal', 'normal'
+    utils.all_sprites.empty()
+    [group.empty() for group in utils.groups]
     cur = lvl
     map, player = cur.init()
+    utils.hud.set_world(map.world_name)
 
 
-load_level(cur, resetscore=True)
+load_level(cur, Utilities, resetscore=True)
