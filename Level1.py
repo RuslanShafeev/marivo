@@ -10,6 +10,7 @@ from MapBase import MapBase
 
 def init():
     world = 'normal'
+    world_name = '1-1'
 
     empty = [69, 70, 86, 88, 153, 154]
     bricks = {
@@ -82,7 +83,8 @@ def init():
     for enemy_class, enemies_arr in enemies:
         map.add_enemies(enemy_class, enemies_arr)
     map.add_decor(grass_hills=grass_hills, grass=grass, clouds=clouds)
+    map.add_world_name(world_name)
 
-    player = Player(180, 11, Map.player_state, Map.player_type)
+    player = Player(3.5, 11, Map.player_state, Map.player_type, Map.world)
 
     return map, player

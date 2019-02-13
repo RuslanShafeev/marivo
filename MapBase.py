@@ -85,3 +85,6 @@ class MapBase:
         for y in clouds:
             for x in clouds[y]:
                 Cloud(x, y)
+
+    def add_world_name(self, world_name):
+        self.world_name = world_name

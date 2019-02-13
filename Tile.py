@@ -47,7 +47,10 @@ class TilesBase(pygame.sprite.Sprite):
         Particle(self.rect.center, 5, 5, self.image)
 
     def kill_enemies(self):
-        [enemy.fast_die() for enemy in pygame.sprite.spritecollide(self, enemies_group, False)]
+        [enemy.fast_die() for enemy in pygame.sprite.spritecollide(self, enemies_group, False, self.check_enemy_collide)]
+
+    def check_enemy_collide(self, tile, enemy):
+        return pygame.sprite.collide_rect(tile, enemy.down_side)
 
 
 class Floor(TilesBase):

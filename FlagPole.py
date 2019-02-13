@@ -11,7 +11,10 @@ class FlagPole(pygame.sprite.Sprite):
         self.image = FlagPole.image
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = (x - 1) * PPM, (y - 10) * PPM
-        Flag(x, y)
+        self.flag = Flag(x, y)
+
+    def start(self):
+        self.flag.start()
 
 
 class Flag(pygame.sprite.Sprite):
@@ -22,3 +25,12 @@ class Flag(pygame.sprite.Sprite):
         self.image = Flag.image
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = (x - 1.5) * PPM, (y - 9) * PPM
+        self.vy = 0
+
+    def update(self):
+        self.rect.y += self.vy
+        if self.vy and pygame.sprite.spritecollideany(self, tiles_group):
+            self.vy = 0
+
+    def start(self):
+        self.vy = 10

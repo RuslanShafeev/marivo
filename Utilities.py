@@ -53,20 +53,35 @@ class Hud:
         self.last_frame = FPS - 1
         self.cur_frame = 0
         self.count = False
+        self.game_over = 0
+        self.load_level_request = False
 
     def update(self):
-        if self.count:
+        if self.game_over:
+            self.game_over -= 1
+            if self.game_over == 1:
+                self.load_level_request = True
+                self.info['LIVES'] = 3
+            elif not self.game_over:
+                self.load_level_request = False
+        elif self.count:
             if self.info['TIME']:
                 self.info['TIME'] -= 1
                 self.info['SCORE'] += 50
-            else:
-                self.count = False
+                if not self.info['TIME']:
+                    self.count = False
         else:
             self.cur_frame = (self.cur_frame + 1) % 60
             if self.cur_frame == self.last_frame and self.info['TIME']:
                 self.info['TIME'] -= 1
+                if not self.info['TIME']:
+                    self.game_over = 600
+
 
     def draw(self, screen):
+        if self.game_over:
+            self.game_over_draw(screen)
+            return
         x = self.h_indent
         for key, key_surf in self.first_line:
             screen.blit(key_surf, (x, self.v_indent))
@@ -95,6 +110,8 @@ class Hud:
 
     def add_lives(self, lives):
         self.info["LIVES"] += int(lives)
+        if self.info["LIVES"] < 0:
+            self.game_over = 600
 
     def set_lives(self, lives):
         self.info["LIVES"] = int(lives)
@@ -102,9 +119,30 @@ class Hud:
     def get_lives(self):
         return self.info["LIVES"]
 
-    def reset(self):
-        self.info = OrderedDict([("SCORE", 0), ("TIME", 400), ("WORLD", self.info['WORLD']),
-                                 ("COINS", 0), ("LIVES", self.info['LIVES'])])
+    def get_time(self):
+        return self.info['TIME']
+
+    def set_time(self, time):
+        self.info['TIME'] = time
+
+    def reset(self, score=False):
+        if score:
+            self.info = OrderedDict([("SCORE", 0), ("TIME", 400), ("WORLD", "1-1"), ("COINS", 0),
+                                     ("LIVES", self.info["LIVES"])])
+        else:
+            self.info["TIME"] = 400
+
+    def game_over_draw(self, screen):
+        screen.fill((0, 0, 0))
+        text = self.font.render('GAME OVER', 1, pygame.Color('White'))
+        screen.blit(text, (WIDTH // 2 - text.get_width() // 2,
+                           HEIGHT // 2 - text.get_height() // 2))
+
+    def get_game_over(self):
+        return self.game_over
+
+    def get_load_level_request(self):
+        return self.load_level_request
 
 
 

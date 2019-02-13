@@ -10,9 +10,9 @@ import Map
 
 
 class Player(Character):
-    def __init__(self, x, y, state, world):
+    def __init__(self, x, y, state, type, world):
         self.world = world
-        self.type = self.world
+        self.type = type
         self.state = state
         self.MARIO_IMAGES = self.load_images()
         self.alpha_surface = pygame.Surface((1, 1), pygame.SRCALPHA)
@@ -60,6 +60,9 @@ class Player(Character):
         self.create_sides()
 
     def update(self):
+        if self.rect.y > HEIGHT * 2:
+            Map.load_level(Map.cur, Utilities, resetscore=True)
+            hud.add_lives(-1)
         self.cur_frame = (self.cur_frame + 1) % 60
         self.update_invincibility()
         self.vx = max(min(self.vx, self.max_vx), -self.max_vx)
@@ -167,6 +170,7 @@ class Player(Character):
         colided_flagpole = pygame.sprite.spritecollideany(self.right_side, castle_group)
         if colided_flagpole and self.rect.x + self.rect.w > colided_flagpole.rect.x + PPM // 4:
             if isinstance(colided_flagpole, FlagPole):
+                colided_flagpole.start()
                 self.flagpoled = 0
                 self.vx = 0
                 points = 5000 if self.rect.y < 2 * PPM else 400
@@ -274,7 +278,7 @@ class Player(Character):
         self.cur_jump = 0
         self.jump()
         hud.add_lives(-1)
-        Map.load_level(Map.cur, Utilities)
+
 
     def become_invincible(self, time, killing=False):
         self.killing = killing
@@ -282,3 +286,6 @@ class Player(Character):
         if killing:
             self.blinking = time
             self.blinking_freq = 10
+
+    def die(self):
+        self.died = True
