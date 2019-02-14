@@ -288,6 +288,7 @@ class Player(Character):
             self.blinking_freq = 10
 
     def die(self):
+        self.cur_jump = self.vx = 0
         self.died = True
 
     def get_flagpoled(self):

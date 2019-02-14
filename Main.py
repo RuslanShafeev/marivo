@@ -5,12 +5,17 @@ import Map
 
 time = pygame.time.Clock()
 
+levels = ['level1', 'level2']
+current_level = 0
+Map.load_level(levels[current_level], Utilities)
+
+
 while True:
     hud.update()
     hud.draw(screen)
 
     if hud.get_load_level_request():
-        Map.load_level(Map.lvl1, Utilities, resetscore=True)
+        Map.load_level(levels[0], Utilities, resetscore=True)
         hud.set_lives(3)
     elif hud.get_game_over():
         time.tick(FPS)
@@ -18,11 +23,8 @@ while True:
         continue
 
     if Map.player.get_flagpoled() and not hud.get_time():
-        if Map.cur == Map.lvl1:
-            Map.load_level(Map.lvl2, Utilities)
-        else:
-            hud.start_game_over()
-            hud.game_over_draw(screen)
+        current_level = (current_level + 1) % len(levels)
+        Map.load_level(levels[current_level], Utilities)
 
     Map.player.process_events(pygame.event.get())
     screen.fill((92, 148, 252))
