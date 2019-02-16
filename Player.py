@@ -296,7 +296,7 @@ class Player(Character):
                                          self.rect.w // 2, 1)
 
     def set_state(self, new_state, new_type=None):
-        """Смена состояний и обновление изображений Марио, включение неуязвимости"""
+        """Смена состояний и обновление изображений Марио, включение мерциния"""
         if not new_type:
             new_type = self.type
         if self.state != new_state or self.type != new_type:
@@ -318,6 +318,7 @@ class Player(Character):
         hud.add_lives(-1)
 
     def become_invincible(self, time, killing=False):
+        """Включение неуязвимости"""
         self.killing = killing
         self.invincibility = time
         if killing:

@@ -3,10 +3,11 @@ from Utilities import *
 
 
 class PointsUp(pygame.sprite.Sprite):
+    """Класс вылетающих на экране очков"""
     SIZE = 20
     pygame.font.init()
     FONT = load_font("SuperMario256.ttf", SIZE)
-    TIMER_LIM = 20
+    TIMER_LIM = 20  # Время существования в кадрах
 
     def __init__(self, x, y, points):
         super().__init__(all_sprites, particles_group)

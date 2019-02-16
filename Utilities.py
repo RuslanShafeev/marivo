@@ -10,6 +10,8 @@ def terminate():
 
 
 def load_image(name, colorkey=None):
+    """Функция безопасной загрузки и преобразования изображения. Конвертирует альфа-канал,
+    может преобразовать цвет в альфа-канал, растягивает исходняе изображение в 3 раза"""
     fullname = os.path.join('data', 'images', name)
     try:
         image = pygame.image.load(fullname)
@@ -26,6 +28,7 @@ def load_image(name, colorkey=None):
 
 
 def load_font(name, size):
+    """Функция безопасной загрузки и создания шрифтов."""
     fullname = os.path.join('data', 'fonts', name)
     try:
         font = pygame.font.Font(fullname, size)
@@ -36,6 +39,8 @@ def load_font(name, size):
 
 
 def cut_sheet(sheet, columns, rows):
+    """Функция, разрезающая переданный surface на заданное количество частей.
+    Всегда возвращает  двумерный список surface'ов"""
     frames = []
     width, height = sheet.get_width() // columns, sheet.get_height() // rows
     for row in range(rows):
@@ -48,6 +53,9 @@ def cut_sheet(sheet, columns, rows):
 
 
 class Hud:
+    """Heads-Up Display. Хранит счет, всемя в секундах, название мира, количество монет и жизней.
+    Занимается подсчетом времени. Передает в main сообщение об окончании времени или жизней.
+    Превращается в заставку gameover"""
     pygame.font.init()
     FONT = load_font("SuperMario256.ttf", 40)
 
@@ -58,36 +66,38 @@ class Hud:
                            self.info.keys()]
         self.first_line_width = sum([item[1].get_width() for item in self.first_line])
         self.h_indent = (WIDTH - self.first_line_width) // (len(self.first_line) + 1)
-        self.v_indent = 10
-        self.last_frame = FPS - 1
-        self.cur_frame = 0
-        self.count = False
-        self.game_over = 0
-        self.load_level_request = False
-        self.game_over_time = 240
+        self.v_indent = 10  # Отступ от верхней границы и между строками худа
+        self.last_frame = FPS - 1  # Номер кадра, на котором произойдет уменьшение времени
+        self.cur_frame = 0  # Счетчик кадров
+        self.count = False  # Режим перевода оставшегося времени в счет. Используется в конце карты.
+        self.game_over = 0  # оставшееся время заставки gameover
+        self.load_level_request = False  # Если True, то в main роизойдет загрузка карты
+        self.game_over_time = 240  # общее время заставки gameover
 
     def update(self):
-        if self.game_over:
+        if self.game_over:  # На последнем кадре game over вызывается загрузка карты
             self.game_over -= 1
             if self.game_over == 1:
                 self.load_level_request = True
                 self.info['LIVES'] = 3
             elif not self.game_over:
                 self.load_level_request = False
-        elif self.count:
+        elif self.count:  # Режим перевода оставшегося времени в счет. Используется в конце карты.
             if self.info['TIME']:
                 self.info['TIME'] -= 1
                 self.info['SCORE'] += 50
                 if not self.info['TIME']:
                     self.count = False
         else:
-            self.cur_frame = (self.cur_frame + 1) % 60
+            self.cur_frame = (self.cur_frame + 1) % 60  # Обновление счетчика кадров
+            # Подсчет времени худа
             if self.cur_frame == self.last_frame and self.info['TIME']:
                 self.info['TIME'] -= 1
                 if not self.info['TIME']:
                     self.start_game_over()
 
     def draw(self, screen):
+        """hud создается всегда по центру экрана"""
         if self.game_over:
             self.game_over_draw(screen)
             return
@@ -141,6 +151,7 @@ class Hud:
         self.info['TIME'] = 400
 
     def game_over_draw(self, screen):
+        """Создание и отрисовка заставки game over"""
         screen.fill((0, 0, 0))
         text = Hud.FONT.render('GAME OVER', 1, pygame.Color('White'))
         screen.blit(text, (WIDTH // 2 - text.get_width() // 2,
@@ -196,5 +207,6 @@ castle_group = pygame.sprite.Group()
 items_group = pygame.sprite.Group()
 particles_group = pygame.sprite.Group()
 
+# Группы в правильном для отрисовки порядке
 groups = [decor_group, items_group, enemies_group, castle_group, tiles_group, players_group,
           particles_group]
