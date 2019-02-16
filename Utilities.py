@@ -10,7 +10,7 @@ def terminate():
 
 
 def load_image(name, colorkey=None):
-    fullname = os.path.join('data', name)
+    fullname = os.path.join('data', 'images', name)
     try:
         image = pygame.image.load(fullname)
     except pygame.error as message:
@@ -23,6 +23,16 @@ def load_image(name, colorkey=None):
         image.set_colorkey(colorkey)
     image_rect = image.get_rect()
     return pygame.transform.scale(image, (image_rect.w * 3, image_rect.h * 3))
+
+
+def load_font(name, size):
+    fullname = os.path.join('data', 'fonts', name)
+    try:
+        font = pygame.font.Font(fullname, size)
+    except pygame.error as message:
+        print('Cannot load font:', name)
+        raise SystemExit(message)
+    return font
 
 
 def cut_sheet(sheet, columns, rows):
@@ -38,14 +48,13 @@ def cut_sheet(sheet, columns, rows):
 
 
 class Hud:
-    FONT = "data/SuperMario256.ttf"
+    pygame.font.init()
+    FONT = load_font("SuperMario256.ttf", 40)
 
     def __init__(self):
-        self.font = pygame.font.Font(Hud.FONT, 40)
-
         self.info = OrderedDict([("SCORE", 0), ("TIME", 400), ("WORLD", "1-1"), ("COINS", 0),
                                  ("LIVES", 3)])
-        self.first_line = [(key, self.font.render(key, 1, pygame.Color('White'))) for key in
+        self.first_line = [(key, Hud.FONT.render(key, 1, pygame.Color('White'))) for key in
                            self.info.keys()]
         self.first_line_width = sum([item[1].get_width() for item in self.first_line])
         self.h_indent = (WIDTH - self.first_line_width) // (len(self.first_line) + 1)
@@ -85,7 +94,7 @@ class Hud:
         x = self.h_indent
         for key, key_surf in self.first_line:
             screen.blit(key_surf, (x, self.v_indent))
-            val_surf = self.font.render(str(self.info[key]), 1, pygame.Color('White'))
+            val_surf = Hud.FONT.render(str(self.info[key]), 1, pygame.Color('White'))
             screen.blit(val_surf, (x + (key_surf.get_width() - val_surf.get_width()) // 2,
                                    self.v_indent + key_surf.get_height()))
             x += self.h_indent + key_surf.get_width()
@@ -133,7 +142,7 @@ class Hud:
 
     def game_over_draw(self, screen):
         screen.fill((0, 0, 0))
-        text = self.font.render('GAME OVER', 1, pygame.Color('White'))
+        text = Hud.FONT.render('GAME OVER', 1, pygame.Color('White'))
         screen.blit(text, (WIDTH // 2 - text.get_width() // 2,
                            HEIGHT // 2 - text.get_height() // 2))
 
@@ -155,7 +164,7 @@ class Camera:
     # сдвинуть объект obj на смещение камеры
     def apply(self, obj):
         obj.rect.x += self.dx
-        if obj.rect.right < 0:
+        if obj.rect.right < 0 or obj.rect.y > HEIGHT:
             obj.kill()
 
     # позиционировать камеру на объекте target

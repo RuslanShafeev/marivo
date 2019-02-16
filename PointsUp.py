@@ -4,7 +4,8 @@ from Utilities import *
 
 class PointsUp(pygame.sprite.Sprite):
     SIZE = 20
-    FONT = pygame.font.Font("data/SuperMario256.ttf", SIZE)
+    pygame.font.init()
+    FONT = load_font("SuperMario256.ttf", SIZE)
     TIMER_LIM = 20
 
     def __init__(self, x, y, points):

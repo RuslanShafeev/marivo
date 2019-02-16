@@ -2,13 +2,15 @@ from Tile import *
 from Player import Player
 from Goomba import Goomba
 from Tube import Tube
-from Koopa import *
+from Koopa import Koopa, JumpingKoopa
 from Castle import Castle
-from FlagPole import *
-import Map
+from FlagPole import FlagPole
 
 
 class MapBase:
+    """Класс карты. Занимается созданием отдельных видов спрайтов, хранит в себе самые
+    важные объекты для удобного доступа из других модулей. Иными словами, занимается конвертацией
+    загруженного json в питоновские объекты"""
     RIGHT_ADD = 12
 
     def __init__(self, world_type, width, height):
@@ -60,8 +62,8 @@ class MapBase:
                 tile_class(x, y, self.world_type)
 
     def add_bonus_brick(self, tiles):
-            for x, y, bonus in tiles:
-                Brick(x, y, self.world_type, bonus)
+        for x, y, bonus in tiles:
+            Brick(x, y, self.world_type, bonus)
 
     def add_enemies(self, enemy_class, enemies):
         for y in enemies:
@@ -96,8 +98,9 @@ class MapBase:
             InvincibleTile(x, y, self.world_type, bonus)
 
     def add_world_name(self, world_name):
+        """Сохраняет название мира для hud"""
         self.world_name = world_name
 
-    def add_player(self, coords, state, type, world):
-        self.player = Player(*coords, state, type, world)
+    def add_player(self, coords, state, type):
+        self.player = Player(*coords, state, type, self.world_type)
         return self.player
