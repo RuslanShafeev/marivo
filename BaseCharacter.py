@@ -11,7 +11,7 @@ class BaseCharacter(pygame.sprite.Sprite):
         Метод занимается созданием rect для self.image и хранит переменные-настройки класса"""
         super().__init__(*groups)
         self.rect = self.image.get_rect()
-        self.rect = self.rect.move(x, y)
+        self.rect = self.rect.move((x - 1) * PPM, y * PPM)  # Перевод из блоков в пиксели
         self.max_vy = 10  # Максимальная вертикальная скорость
         self.vy = 0  # Вертикальная скорость
         self.create_sides()  # Создание коллизий
@@ -107,8 +107,3 @@ class BaseCharacter(pygame.sprite.Sprite):
                                           self.rect.h - self.max_vy * 2)
         self.right_side.rect = pygame.Rect(self.rect.right, self.rect.y + self.max_vy, 1,
                                            self.rect.h - self.max_vy * 2)
-
-
-class Character(BaseCharacter):
-    def __init__(self, x, y, *groups):
-        super().__init__((x - 1) * PPM, y * PPM, *groups)

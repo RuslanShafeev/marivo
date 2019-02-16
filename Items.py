@@ -1,6 +1,6 @@
 import pygame
 from Utilities import cut_sheet, load_image, all_sprites, items_group, players_group, \
-    enemies_group, tiles_group, hud, screen
+    enemies_group, tiles_group, hud, screen, PPM
 from BaseCharacter import BaseCharacter
 from PointsUp import PointsUp
 
@@ -228,7 +228,7 @@ class CoinStatic(pygame.sprite.Sprite):
         self.cur_frame = 0  # Счетчик кадров
         self.image = self.frames[self.cur_frame]
         self.rect = self.image.get_rect()
-        self.rect = self.rect.move(x, y)
+        self.rect = self.rect.move((x - 1) * PPM, y * PPM)
 
     def update(self):
         self.cur_frame = (self.cur_frame + 1) % 60  # Обновление счетчика кадров

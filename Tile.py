@@ -124,7 +124,7 @@ class Brick(TilesBase):
                 item_obj = TilesBase.ITEMS[self.items.pop()]
                 if item_obj is FireFlower and mario_state == 'small':
                     item_obj = MushroomSizeUp
-                item_obj(self.rect.x, self.end_y, self.world)
+                item_obj(self.rect.x / PPM + 1, self.end_y / PPM, self.world)
                 if not self.items:
                     self.image = self.stone_image
                 self.moving = True
@@ -166,7 +166,7 @@ class InvincibleTile(TilesBase):
         if item_obj is FireFlower and mario_state == 'small':
             # Для маленького Марио вместо цветка создается увеличивающий гриб
             item_obj = MushroomSizeUp
-        item_obj(self.rect.x, self.rect.y - 14, self.world)
+        item_obj(self.rect.x / PPM + 1, (self.rect.y - 14) / PPM, self.world)
         self.image = TilesBase.IMAGES[self.world][9]
         self.used = True
 
@@ -201,7 +201,7 @@ class Quest(TilesBase):
             if item_obj is FireFlower and mario_state == 'small':
                 # Для маленького Марио вместо цветка создается увеличивающий гриб
                 item_obj = MushroomSizeUp
-            item_obj(self.rect.x, self.end_y, self.world)
+            item_obj(self.rect.x / PPM + 1, self.end_y / PPM, self.world)
             self.item = None
             self.moving = True
 

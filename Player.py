@@ -1,14 +1,14 @@
 import pygame
 from Utilities import *
 import Utilities
-from BaseCharacter import Character
+from BaseCharacter import BaseCharacter
 from FlagPole import *
 from Items import Fire
 from PointsUp import PointsUp
 import Map
 
 
-class Player(Character):
+class Player(BaseCharacter):
     """Собственно, сам Марио. Имеет множество состояний, анимаций, инерцию, занимается проверками на
     столкновения с врагами, блоками, замком"""
 
@@ -256,7 +256,8 @@ class Player(Character):
                     any_key_pressed = True
 
                 elif event.key == pygame.K_x and self.type == 'fire':
-                    Fire(*self.rect.center, 1 if self.frames is self.r_frames else -1)
+                    Fire(self.rect.centerx / PPM + 1, self.rect.centery / PPM,
+                         1 if self.frames is self.r_frames else -1)
 
         if self.died or self.flagpoled >= 0:
             # Игнорируем нажатые клавиши после смерти или пересечения флажка
@@ -315,7 +316,6 @@ class Player(Character):
         self.died = True
         self.cur_jump = 0
         self.jump()
-        hud.add_lives(-1)
 
     def become_invincible(self, time, killing=False):
         """Включение неуязвимости"""

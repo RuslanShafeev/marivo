@@ -1,10 +1,10 @@
 import pygame
 from Utilities import cut_sheet, load_image, all_sprites, enemies_group, screen, hud
 from PointsUp import PointsUp
-from BaseCharacter import BaseCharacter, Character
+from BaseCharacter import BaseCharacter
 
 
-class Goomba(Character):
+class Goomba(BaseCharacter):
     """Класс Гумбы (враждебный ходячий гриб)"""
 
     # Здесь происходит загрузка изображений Гумбы для разных миров

@@ -1,12 +1,12 @@
 import pygame
 from Utilities import cut_sheet, load_image, all_sprites, enemies_group, tiles_group, screen, \
     hud, PPM
-from BaseCharacter import BaseCharacter, Character
+from BaseCharacter import BaseCharacter
 from PointsUp import PointsUp
 import Map
 
 
-class Koopa(Character):
+class Koopa(BaseCharacter):
     """Класс Купы (враждебной черепахи). Может скрываться в панцирь, кататься по уровню, убивая
     других врагов и игрока"""
 
