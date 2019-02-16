@@ -98,7 +98,7 @@ class Player(BaseCharacter):
     def update_flagpoled(self):
         """Анимации в конце уровня"""
         if self.flagpoled == 1:  # Прогулка от флажка до замка
-            if self.rect.x >= Map.map.castle.get_centre():
+            if self.rect.x >= Map.get_map().castle.get_centre():
                 self.kill()  # Вход в дверь замка
             self.rect.x += self.end_speed
             self.cur_jump = self.max_jumps

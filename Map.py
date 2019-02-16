@@ -64,3 +64,10 @@ def load_level(lvl, utils, resetscore=False):
     map.add_invisible_tile(level["InvincibleTile"])
     player = map.add_player(level["player"], player_state, player_type)
     utils.hud.set_world(map.world_name)  # Не забываем про название уровня в hud
+
+
+def get_player():
+    return player
+
+def get_map():
+    return map

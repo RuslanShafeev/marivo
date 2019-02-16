@@ -91,7 +91,7 @@ class Koopa(BaseCharacter):
             if not self.vx:
                 # Выбор направления движения катающейся в панцире Купы
                 right = (self.rect.x + self.rect.w // 2) > (
-                        Map.player.rect.x + Map.player.rect.w // 2)
+                        Map.get_player().rect.x + Map.get_player().rect.w // 2)
                 self.vx = 10 if right else (-10)
             else:
                 # Окончательное убийство Купы

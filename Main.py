@@ -27,16 +27,16 @@ def main():
             continue
 
         # Условие, сигнализирующее об окончании уровня и подсчета очков
-        if Map.player.get_flagpoled() and not hud.get_time():
+        if Map.get_player().get_flagpoled() and not hud.get_time():
             # Загружаем следующий или первый уровень
             current_level = (current_level + 1) % len(levels)
             Map.load_level(levels[current_level], Utilities)
 
-        Map.player.process_events(pygame.event.get())  # Разбором событий занимается player
+        Map.get_player().process_events(pygame.event.get())  # Разбором событий занимается player
         screen.fill((92, 148, 252))
 
         # изменяем ракурс камеры
-        camera.update(Map.player)
+        camera.update(Map.get_player())
         # обновляем положение всех спрайтов
         for sprite in all_sprites:
             camera.apply(sprite)
